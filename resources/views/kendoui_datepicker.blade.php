@@ -5,7 +5,7 @@
     <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Remove Tap Highlight on Windows Phone IE -->
-    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta name="msapplication-tap-highlight" content="no" />
 
     <link rel="icon" type="image/png" href="altair/assets/img/favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="altair/assets/img/favicon-32x32.png" sizes="32x32">
@@ -14,9 +14,9 @@
 
     <!-- additional styles for plugins -->
     <!-- kendo UI -->
-    <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.common-material.min.css"/>
-    <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.material.min.css" id="kendoCSS"/>
-    
+    <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.material.min.css" id="kendoCSS" />
+
     <!-- uikit -->
     <link rel="stylesheet" href="altair/bower_components/uikit/css/uikit.almost-flat.min.css" media="all">
 
@@ -25,7 +25,7 @@
 
     <!-- style switcher -->
     <link rel="stylesheet" href="altair/assets/css/style_switcher.min.css" media="all">
-    
+
     <!-- altair admin -->
     <link rel="stylesheet" href="altair/assets/css/main.min.css" media="all">
 
@@ -34,10 +34,10 @@
 
     <!-- matchMedia polyfill for testing media queries in JS -->
     <!--[if lte IE 9]>
-        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
-        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
-        <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
-    <![endif]-->
+            <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
+            <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
+            <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
+        <![endif]-->
 @endsection
 
 @section('header')
@@ -62,9 +62,9 @@
                             </form>
                         </div>
                         <div class="uk-width-large-1-2">
-<pre class="line-numbers"><code class="language-javascript">$(input).kendoDatePicker({
-  format: "d-MM-yyyy"
-});</code></pre>
+                            <pre class="line-numbers"><code class="language-javascript">$(input).kendoDatePicker({
+                            format: "d-MM-yyyy"
+                            });</code></pre>
                         </div>
                     </div>
                 </div>
@@ -80,11 +80,11 @@
                             </form>
                         </div>
                         <div class="uk-width-large-1-2">
-<pre class="line-numbers"><code class="language-javascript">$(input).kendoDatePicker({
-  start: "year",
-  depth: "year",
-  format: "MMMM yyyy"
-});</code></pre>
+                            <pre class="line-numbers"><code class="language-javascript">$(input).kendoDatePicker({
+      start: "year",
+      depth: "year",
+      format: "MMMM yyyy"
+    });</code></pre>
                         </div>
                     </div>
                 </div>
@@ -109,10 +109,10 @@
                 ]
             }
         };
-        (function() {
+        (function () {
             var wf = document.createElement('script');
             wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
             wf.type = 'text/javascript';
             wf.async = 'true';
             var s = document.getElementsByTagName('script')[0];
@@ -133,19 +133,19 @@
 
     <!--  kendoui functions -->
     <script src="altair/assets/js/pages/kendoui.min.js"></script>
-    
+
     <script>
-        $(function() {
-            if(isHighDensity) {
+        $(function () {
+            if (isHighDensity) {
                 // enable hires images
                 altair_helpers.retina_images();
             }
-            if(Modernizr.touch) {
+            if (Modernizr.touch) {
                 // fastClick (touch devices)
                 FastClick.attach(document.body);
             }
         });
-        $window.load(function() {
+        $window.load(function () {
             // ie fixes
             altair_helpers.ie_fix();
         });
@@ -232,7 +232,7 @@
     </div>
 
     <script>
-        $(function() {
+        $(function () {
             var $switcher = $('#style_switcher'),
                 $switcher_toggle = $('#style_switcher_toggle'),
                 $theme_switcher = $('#theme_switcher'),
@@ -244,12 +244,12 @@
                 $body = $('body');
 
 
-            $switcher_toggle.click(function(e) {
+            $switcher_toggle.click(function (e) {
                 e.preventDefault();
                 $switcher.toggleClass('switcher_active');
             });
 
-            $theme_switcher.children('li').click(function(e) {
+            $theme_switcher.children('li').click(function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     this_theme = $this.attr('data-app-theme');
@@ -269,14 +269,14 @@
                     if (this_theme == 'app_theme_dark') {
                         $('#kendoCSS').attr('href',
                             'altair/bower_components/kendo-ui/styles/kendo.materialblack.min.css'
-                            )
+                        )
                     }
                 }
 
             });
 
             // hide style switcher
-            $document.on('click keyup', function(e) {
+            $document.on('click keyup', function (e) {
                 if ($switcher.hasClass('switcher_active')) {
                     if (
                         (!$(e.target).closest($switcher).length) ||
@@ -297,18 +297,18 @@
 
             // change input's state to checked if mini sidebar is active
             if ((localStorage.getItem("altair_sidebar_mini") !== null && localStorage.getItem(
-                    "altair_sidebar_mini") == '1') || $body.hasClass('sidebar_mini')) {
+                "altair_sidebar_mini") == '1') || $body.hasClass('sidebar_mini')) {
                 $mini_sidebar_toggle.iCheck('check');
             }
 
             $mini_sidebar_toggle
-                .on('ifChecked', function(event) {
+                .on('ifChecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.setItem("altair_sidebar_mini", '1');
                     localStorage.removeItem('altair_sidebar_slim');
                     location.reload(true);
                 })
-                .on('ifUnchecked', function(event) {
+                .on('ifUnchecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.removeItem('altair_sidebar_mini');
                     location.reload(true);
@@ -318,18 +318,18 @@
 
             // change input's state to checked if mini sidebar is active
             if ((localStorage.getItem("altair_sidebar_slim") !== null && localStorage.getItem(
-                    "altair_sidebar_slim") == '1') || $body.hasClass('sidebar_slim')) {
+                "altair_sidebar_slim") == '1') || $body.hasClass('sidebar_slim')) {
                 $slim_sidebar_toggle.iCheck('check');
             }
 
             $slim_sidebar_toggle
-                .on('ifChecked', function(event) {
+                .on('ifChecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.setItem("altair_sidebar_slim", '1');
                     localStorage.removeItem('altair_sidebar_mini');
                     location.reload(true);
                 })
-                .on('ifUnchecked', function(event) {
+                .on('ifUnchecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.removeItem('altair_sidebar_slim');
                     location.reload(true);
@@ -338,19 +338,19 @@
             // toggle boxed layout
 
             if ((localStorage.getItem("altair_layout") !== null && localStorage.getItem("altair_layout") ==
-                    'boxed') || $body.hasClass('boxed_layout')) {
+                'boxed') || $body.hasClass('boxed_layout')) {
                 $boxed_layout_toggle.iCheck('check');
                 $body.addClass('boxed_layout');
                 $(window).resize();
             }
 
             $boxed_layout_toggle
-                .on('ifChecked', function(event) {
+                .on('ifChecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.setItem("altair_layout", 'boxed');
                     location.reload(true);
                 })
-                .on('ifUnchecked', function(event) {
+                .on('ifUnchecked', function (event) {
                     $switcher.removeClass('switcher_active');
                     localStorage.removeItem('altair_layout');
                     location.reload(true);
@@ -362,10 +362,10 @@
             }
 
             $accordion_mode_toggle
-                .on('ifChecked', function() {
+                .on('ifChecked', function () {
                     $sidebar_main.addClass('accordion_mode');
                 })
-                .on('ifUnchecked', function() {
+                .on('ifUnchecked', function () {
                     $sidebar_main.removeClass('accordion_mode');
                 });
 
