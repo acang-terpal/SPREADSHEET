@@ -36,7 +36,7 @@
                     <span class="menu_title">SpreedSheet</span>
                 </a>
             </li>
-            <li title="Mailbox" class="{{ $activeSidebarMain == "mailbox" ? "current_section" : ""}}" >
+            {{-- <li title="Mailbox" class="{{ $activeSidebarMain == "mailbox" ? "current_section" : ""}}" >
                 <a href="mailbox">
                     <span class="menu_icon"><i class="material-icons">&#xE158;</i></span>
                     <span class="menu_title">Mailbox</span>
@@ -71,14 +71,14 @@
                     <span class="menu_icon"><i class="material-icons">&#xE87C;</i></span>
                     <span class="menu_title">User Profile</span>
                 </a>
-            </li>
+            </li> --}}
             <li title="Forms">
                 <a href="#">
                     <span class="menu_icon"><i class="material-icons">&#xE8D2;</i></span>
-                    <span class="menu_title">Forms</span>
+                    <span class="menu_title">Laporan Capaian</span>
                 </a>
                 <ul>
-                    <li class="{{ $activeSidebarMain == "forms_regular" ? "act_item" : ""}}"><a href="forms_regular">Regular Elements</a></li>
+                    <li class="{{ $activeSidebarMain == "forms_regular" ? "act_item" : ""}}"><a href="forms_regular">Input</a></li>
                     <li class="{{ $activeSidebarMain == "forms_advance" ? "act_item" : ""}}"><a href="forms_advanced">Advanced Elements</a></li>
                     <li class="{{ $activeSidebarMain == "forms_dynamic" ? "act_item" : ""}}"><a href="forms_dynamic">Dynamic</a></li>
                     <li class="{{ $activeSidebarMain == "forms_file_input" ? "act_item" : ""}}"><a href="forms_file_input">File Input</a></li>
@@ -94,14 +94,14 @@
             <li title="Layout">
                 <a href="#">
                     <span class="menu_icon"><i class="material-icons">&#xE8F1;</i></span>
-                    <span class="menu_title">Layout</span>
+                    <span class="menu_title">Administrator</span>
                 </a>
                 <ul>
-                    <li class="{{ $activeSidebarMain == "layout_top_menu" ? "act_item" : ""}}"><a href="layout_top_menu">Top Menu</a></li>
-                    <li class="{{ $activeSidebarMain == "layout_header_full" ? "act_item" : ""}}"><a href="layout_header_full">Full Header</a></li>
+                    <li class="{{ $activeSidebarMain == "layout_top_menu" ? "act_item" : ""}}"><a href="layout_top_menu">Input</a></li>
+                    <li class="{{ $activeSidebarMain == "layout_header_full" ? "act_item" : ""}}"><a href="layout_header_full">Capaian</a></li>
                 </ul>
             </li>
-            <li title="Kendo UI Widgets">
+            {{-- <li title="Kendo UI Widgets">
                 <a href="#">
                     <span class="menu_icon"><i class="material-icons">&#xE1BD;</i></span>
                     <span class="menu_title">Kendo UI Widgets</span>
@@ -265,7 +265,7 @@
                         </ul>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </aside><!-- main sidebar end -->

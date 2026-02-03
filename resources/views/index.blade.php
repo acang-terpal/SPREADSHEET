@@ -12,14 +12,6 @@
 
     <title>Altair Admin v2.7.0</title>
 
-    <!-- additional styles for plugins -->
-    <!-- weather icons -->
-    <link rel="stylesheet" href="altair/bower_components/weather-icons/css/weather-icons.min.css" media="all">
-    <!-- metrics graphics (charts) -->
-    <link rel="stylesheet" href="altair/bower_components/metrics-graphics/dist/metricsgraphics.css">
-    <!-- chartist -->
-    <link rel="stylesheet" href="altair/bower_components/chartist/dist/chartist.min.css">
-
     <!-- uikit -->
     <link rel="stylesheet" href="altair/bower_components/uikit/css/uikit.almost-flat.min.css" media="all">
 
@@ -40,8 +32,11 @@
     <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.common-material.min.css" />
     <link rel="stylesheet" href="altair/bower_components/kendo-ui/styles/kendo.material.min.css" id="kendoCSS" />
 
-    <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.css" type="text/css" />
-    <link rel="stylesheet" href="https://jsuites.net/v5/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jspreadsheet.css" type="text/css" />
+    <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jsuites.css" type="text/css" />
+
+    {{-- <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.css" type="text/css" />
+    <link rel="stylesheet" href="https://jsuites.net/v5/jsuites.css" type="text/css" /> --}}
 
     <!-- matchMedia polyfill for testing media queries in JS -->
     <!--[if lte IE 9]>
@@ -240,42 +235,22 @@
     <script src="altair/assets/js/altair_admin_common.min.js"></script>
 
     <!-- page specific plugins -->
-    <!-- d3 -->
-    <script src="altair/bower_components/d3/d3.min.js"></script>
-    <!-- metrics graphics (charts) -->
-    <script src="altair/bower_components/metrics-graphics/dist/metricsgraphics.js"></script>
-    <!-- chartist (charts) -->
-    <script src="altair/bower_components/chartist/dist/chartist.min.js"></script>
-    <!-- maplace (google maps) -->
-    <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
-    <script src="altair/bower_components/maplace-js/dist/maplace.min.js"></script>
     <!-- peity (small charts) -->
     <script src="altair/bower_components/peity/jquery.peity.min.js"></script>
-    <!-- easy-pie-chart (circular statistics) -->
-    <script src="altair/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js"></script>
     <!-- countUp -->
     <script src="altair/bower_components/countUp.js/dist/countUp.min.js"></script>
-    <!-- handlebars.js -->
-    <script src="altair/bower_components/handlebars/handlebars.min.js"></script>
-    <script src="altair/assets/js/custom/handlebars_helpers.min.js"></script>
-    <!-- CLNDR -->
-    <script src="altair/bower_components/clndr/clndr.min.js"></script>
-    <!-- fitvids -->
-    <script src="altair/bower_components/fitvids/jquery.fitvids.js"></script>
-
-    <!-- page specific plugins -->
     <!-- kendo UI -->
     <script src="altair/assets/js/kendoui_custom.js"></script>
-
     <!--  kendoui functions -->
     <script src="altair/assets/js/pages/kendoui.min.js"></script>
 
     <!--  dashbord functions -->
     {{-- <script src="altair/assets/js/pages/dashboard.js"></script> --}}
 
-    {{-- <script src="altair/assets/custom_js/jspreadsheet/jspreadsheet.js"></script> --}}
-    <script src="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.js"></script>
-    <script src="https://jsuites.net/v5/jsuites.js"></script>
+    <script src="altair/assets/custom_js/jspreadsheet/jspreadsheet.js"></script>
+    <script src="altair/assets/custom_js/jspreadsheet/jsuites.js"></script>
+    {{-- <script src="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.js"></script>
+    <script src="https://jsuites.net/v5/jsuites.js"></script> --}}
     <script src="altair/assets/custom_js/dashboard.js"></script>
 
     <script>
