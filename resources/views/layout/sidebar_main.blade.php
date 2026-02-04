@@ -50,9 +50,9 @@
                     <li class="{{ $activeSidebarMain == "forms_validation" ? "act_item" : ""}}"><a href="forms_validation">Validation</a></li>
                     <li class="{{ $activeSidebarMain == "forms_wizard" ? "act_item" : ""}}"><a href="forms_wizard">Wizard</a></li> --}}
                     <li class="menu_subtitle">Manager Menu</li>
-                    <li class="{{ $activeSidebarMain == "forms_wysiwyg_ckeditor" ? "act_item" : ""}}"><a href="forms_wysiwyg_ckeditor">Input</a></li>
-                    <li class="{{ $activeSidebarMain == "forms_wysiwyg_inline" ? "act_item" : ""}}"><a href="forms_wysiwyg_inline">Capaian</a></li>
-                    <li class="{{ $activeSidebarMain == "forms_wysiwyg_tinymce" ? "act_item" : ""}}"><a href="forms_wysiwyg_tinymce">NKO</a></li>
+                    <li class="{{ $activeSidebarMain == "form_input_management" ? "act_item" : ""}}"><a href="form_input_management">Input Management</a></li>
+                    <li class="{{ $activeSidebarMain == "forms_wysiwyg_inline" ? "act_item" : ""}}"><a href="forms_wysiwyg_inline">Capaian Management</a></li>
+                    <li class="{{ $activeSidebarMain == "forms_wysiwyg_tinymce" ? "act_item" : ""}}"><a href="forms_wysiwyg_tinymce">NKO Management</a></li>
                 </ul>
             </li>
         </ul>

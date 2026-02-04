@@ -17,4 +17,8 @@ class InputController extends Controller
     public function getFormNkoPage(){
         return view('form_nko',["activeSidebarMain" => "form_nko", "bodyClass" => "sidebar_main_open sidebar_main_swipe"]);
     }
+
+    public function getFormInputManagementPage(){
+        return view('form_input_management',["activeSidebarMain" => "form_input_management", "bodyClass" => "sidebar_main_open sidebar_main_swipe"]);
+    }
 }

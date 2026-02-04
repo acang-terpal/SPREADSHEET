@@ -34,4 +34,5 @@ Route::group([
     Route::get('/form_input', [InputController::class, 'getFormInputPage']);
     Route::get('/form_capaian', [InputController::class, 'getFormCapaianPage']);
     Route::get('/form_nko', [InputController::class, 'getFormNkoPage']);
+    Route::get('/form_input_management', [InputController::class, 'getFormInputManagementPage']);
 });
