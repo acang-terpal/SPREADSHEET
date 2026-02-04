@@ -35,11 +35,13 @@ let NEGATIVE = function (v) {
 ctrlDashboard = {
     worksheetInput: "",
     datasourceInput: [
+        ['No', 'Data Dibutuhkan', 'Satuan', 'Level'],
         ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
         ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
     ],
-    tempBeforeChange: "",
-    isChangeByBeRespons: false,
+    tempSatuanBeforeChange: "",
+    tempLevelBeforeChange: "",
+    isChangeByProgram: false,
     initKendo: function () {
         $("#tahun").kendoDatePicker({
             // Sets the format of the input field
@@ -81,57 +83,83 @@ ctrlDashboard = {
                 columnResize: false,
                 tableWidth: parentWidth,
                 tableOverflow: true,
+                filters: false,
                 columns: [
-                    { type: 'text', width: 50, title:'No', wordWrap: true },
-                    { type: 'text', width: 420, title:'Data Dibutuhkan', wordWrap: true },
-                    { type:'dropdown', width:'120px', title:'Satuan', source:['%','BBL', 'MMSCFD'] },
-                    { type: 'text', width: 120, title:'Penyedia Data', wordWrap: true },
-                    { type: 'text', width: 120, title:'TW I', wordWrap: true },
-                    { type: 'text', width: 120, title:'TW II', wordWrap: true },
-                    { type: 'text', width: 120, title:'TW III', wordWrap: true },
-                    { type: 'text', width: 120, title:'TW IV', wordWrap: true },
+                    { type: 'text', width: 50, wordWrap: true },
+                    { type: 'text', width: 420, wordWrap: true },
+                    { type:'dropdown', width:'120px', source:['Satuan', '%','BBL', 'MMSCFD'] },
+                    { type:'dropdown', width:'120px', source:['Level', 'DMB','DMO', 'DMOP'] },
                 ],
             }],
             contextMenu: function () {
                 return false;
             },
             onbeforechange: function (instance, cell, x, y, value) {
-                ctrlDashboard.tempBeforeChange = structuredClone(ctrlDashboard.datasourceInput[y][x]);
+                // -----------------------handle dropdown--------------------------
+                if (value === 'Satuan' || value === 'Level' || value == '') {
+                    return false; // Cancel the change
+                } else if (x == 2){
+                    ctrlDashboard.tempSatuanBeforeChange = structuredClone(ctrlDashboard.datasourceInput[y][x]);
+                } else if (x == 3) {
+                    ctrlDashboard.tempLevelBeforeChange = structuredClone(ctrlDashboard.datasourceInput[y][x]);
+                }
             },
             onchange: function (instance, cell, x, y, value) {
-                if (ctrlDashboard.tempBeforeChange !== value && ctrlDashboard.isChangeByBeRespons == false) {
-                    // console.log(ctrlDashboard.datasourceInput)
-                    cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
-                    console.log('New change on cell ' + cellName + ' from: ' + ctrlDashboard.tempBeforeChange + ' to: ' + value);
-                    //call backend
-                    ctrlDashboard.callBe(ctrlDashboard.datasourceInput);
+                cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
+                // -----------------------handle dropdown--------------------------
+                if(x == 2 && ctrlDashboard.tempSatuanBeforeChange != value){
+                    if (value != false) {
+                        console.log('New change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + ctrlDashboard.tempSatuanBeforeChange + ' to: ' + value);
+                        instance.setValueFromCoords(x, y, value);
+                    } else {
+                        console.log('Before change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + value + ' to: ' + ctrlDashboard.tempSatuanBeforeChange);
+                        instance.setValueFromCoords(x, y, ctrlDashboard.tempSatuanBeforeChange);
+
+                    }
+                } else if(x == 3 && ctrlDashboard.tempLevelBeforeChange != value){
+                    if (value != false) {
+                        instance.setValueFromCoords(x, y, value);
+                    } else {
+                        instance.setValueFromCoords(x, y, ctrlDashboard.tempLevelBeforeChange);
+                    }
                 }
+            },
+            onafterchanges: function(){
+
             }
         })[0];
         // ctrlDashboard.worksheetInput = $('#spreadSheetInput').jspreadsheet({
 
         // })[0];
         // Example: Loop through 8 columns (A-H) and 3 rows (1-3)
-        const numCols = 2;
-        const numRows = 2;
+        const numCols = 4;
+        const numRows = 3;
 
         for (let i = 0; i < numCols; i++) {
             // Convert 0, 1, 2 to 'A', 'B', 'C'
             let colLetter = String.fromCharCode(65 + i);
-
             for (let j = 1; j <= numRows; j++) {
                 let cellCoord = colLetter + j; // A1, A2... B1...
-                console.log(cellCoord);
+                // console.log(cellCoord);
                 ctrlDashboard.worksheetInput.setReadOnly(cellCoord, true);
                 ctrlDashboard.worksheetInput.setStyle(cellCoord, 'color', '#363434', true);
-                if (j < 3) {
-                    ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', '#d1d1d1', true);
-                } else if (i >= 3 && j != 1) {
+                if (j == 1) {
+                    ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', 'yellow', true);
+                } else if (i < 2 && j >= 2) {
+                    ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', '#eeeeee', true);
+                } else if (i == 2 && j != 1) {
                     ctrlDashboard.worksheetInput.setReadOnly(cellCoord, false);
                     ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', 'white', true);
+                    ctrlDashboard.worksheetInput.setValue(cellCoord, '%');
+                } else if (i == 3 && j != 1) {
+                    ctrlDashboard.worksheetInput.setReadOnly(cellCoord, false);
+                    ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', 'white', true);
+                    ctrlDashboard.worksheetInput.setValue(cellCoord, 'DMB');
                 }
             }
         }
+        // console.log(ctrlDashboard.worksheetInput.getCellFromCoords(2, 1));
+        cellDropDown = ctrlDashboard.worksheetInput.getCellFromCoords(2, 1);
         // -------------------change bg collor and font collor
         // ctrlDashboard.worksheetInput.setStyle(cellCoord, 'background-color', 'yellow', true);
         // ctrlDashboard.worksheetInput.setStyle(cellCoord, 'color', '#363434', true);
@@ -172,13 +200,13 @@ ctrlDashboard = {
 
             },
             success: function (res) {
-                ctrlDashboard.isChangeByBeRespons = true;
+                ctrlDashboard.isChangeByProgram = true;
                 // ctrlDashboard.worksheet.setValue('H6', res.H6, true);
                 // ctrlDashboard.worksheet.setValue('H7', res.H7, true);
                 // ctrlDashboard.worksheet.setValue('H8', res.H8, true);
                 // ctrlDashboard.worksheet.setValue('H9', res.H9, true);
                 // ctrlDashboard.worksheet.setValue('H10', res.H10, true);
-                ctrlDashboard.isChangeByBeRespons = false;
+                ctrlDashboard.isChangeByProgram = false;
                 console.log("response complex formula " + JSON.stringify(res))
             },
             error: function (err) {
