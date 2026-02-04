@@ -477,9 +477,9 @@
                                 .attr('name', newName)
                                 .attr('id', newId)
                                 .removeAttr('style').removeAttr('checked').next('.switchery').remove();
-    
+
                             $inputLabel.attr('for', newId);
-                        
+
                         })
                         .end()
                         // selectize
@@ -528,7 +528,7 @@
                 altair_forms.select_elements($newSection);
 
             });
-            
+
             // remove section
             $('#page_content').on('click', '.btnSectionRemove', function(e) {
                 e.preventDefault();
@@ -1457,9 +1457,9 @@
             function toggleFAB(obj) {
                 var $this = $(obj),
                     $this_wrapper = $this.closest('.md-fab-wrapper');
-        
+
                 $this_wrapper.toggleClass('md-fab-active');
-        
+
                 $this.velocity({
                     scale: 0
                 }, {
