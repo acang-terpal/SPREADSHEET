@@ -56,6 +56,10 @@ ctrlFormInput = {
         ctrlFormInput.observerPageContentIner = new ResizeObserver(entries => {
             for (let entry of entries) {
                 console.log('Elemen berubah ukuran!', entry.contentRect.width);
+                //-------------------------change table jspreadsheet wrapper dynamic
+                $('.jss_content').attr("style", "width:" + (entry.contentRect.width - 30) + "px; overflow-x: auto; ");
+
+                //-------------------------change each column to same size
                 // // Ambil lebar container (dikurangi sedikit untuk padding/scrollbar jika ada)
                 // const containerWidth = entry.contentRect.width - 100;
                 // // Hitung jumlah kolom
@@ -339,7 +343,7 @@ ctrlFormInput = {
                 worksheetName: 'test1',
                 worksheetId: '0',
                 columnResize: false,
-                tableWidth: parentWidth - 20,
+                tableWidth: parentWidth - 30,
                 tableOverflow: true,
                 filters: false,
                 columnSorting: false,
