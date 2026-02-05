@@ -324,11 +324,11 @@
     </script>
 
     <!-- common functions -->
-    <script src="altair/assets/js/common.min.js"></script>
+    <script src="altair/assets/js/common.js"></script>
     <!-- uikit functions -->
-    <script src="altair/assets/js/uikit_custom.min.js"></script>
+    <script src="altair/assets/js/uikit_custom.js"></script>
     <!-- altair common functions/helpers -->
-    <script src="altair/assets/js/altair_admin_common.min.js"></script>
+    <script src="altair/assets/js/altair_admin_common.js"></script>
 
     <!-- kendo UI -->
     <script src="altair/assets/js/kendoui_custom.js"></script>
