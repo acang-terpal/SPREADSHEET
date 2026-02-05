@@ -36,15 +36,16 @@
     <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jspreadsheet.css" type="text/css" />
     <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jsuites.css" type="text/css" />
 
-    {{-- <link rel="stylesheet" href="https://jspreadsheet.com/v12/jspreadsheet.css" type="text/css" />
+    {{--
+    <link rel="stylesheet" href="https://jspreadsheet.com/v12/jspreadsheet.css" type="text/css" />
     <link rel="stylesheet" href="https://jsuites.net/v6/jsuites.css" type="text/css" /> --}}
 
     <!-- matchMedia polyfill for testing media queries in JS -->
     <!--[if lte IE 9]>
-                                <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
-                                <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
-                                <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
-                            <![endif]-->
+                                        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
+                                        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
+                                        <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
+                                    <![endif]-->
 @endsection
 
 @section("header")
@@ -95,8 +96,10 @@
             <div class="uk-grid uk-grid-width-medium-1-1" data-uk-grid="{gutter:24}">
                 <div>
                     <div class="md-card">
-                        <div class="md-card-toolbar">
+                        <div class="md-card-toolbar" style="height: 58px">
                             <div class="md-card-toolbar-actions">
+                                <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.addColumn()">Add
+                                    Column</a>
                                 <i class="md-icon material-icons md-card-fullscreen-activate">&#xE5D0;</i>
                                 <i class="md-icon material-icons md-card-toggle">&#xE316;</i>
                                 {{-- <i class="md-icon material-icons md-card-close">&#xE14C;</i> --}}
@@ -114,6 +117,180 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div id="modal_overflow" class="uk-modal">
+        <div class="uk-modal-dialog">
+            <button type="button" class="uk-modal-close uk-close"></button>
+            <h2 class="heading_a">Add Column</h2>
+            <div class="uk-overflow-container">
+                <h2 class="heading_b">Overflow container</h2>
+                <img src="altair/assets/img/gallery/Image06.jpg" alt="" />
+                <p>Qui at quasi adipisci ullam incidunt nihil nisi quia et qui enim enim est dolore tempora quia cum animi
+                    asperiores alias ducimus sit sunt modi accusantium quidem quis hic et velit perspiciatis et distinctio
+                    dolores quibusdam cum ullam repudiandae recusandae corporis consequatur et et aut dolore qui molestiae
+                    ratione iusto numquam dolore aliquam blanditiis et iste ut quae suscipit sed in aut eligendi saepe
+                    dignissimos rerum ab cumque quod doloremque nesciunt assumenda quia voluptatum ducimus amet unde ex
+                    fugit dolorem distinctio dolores deserunt rem suscipit itaque officiis culpa illum sit animi alias velit
+                    dicta aut error et veritatis officiis et quia rerum voluptatem debitis quasi officiis exercitationem
+                    reiciendis et dolor ea eveniet consequatur voluptate omnis veniam earum consequuntur architecto et
+                    excepturi sit quos iste et dolores ducimus ex et quibusdam autem sed ipsa qui quo at nihil consequatur
+                    quidem illo sed modi ad vel asperiores unde ipsam id aliquid iste quo impedit quia minima architecto vel
+                    mollitia quia eius saepe omnis dolore nihil assumenda voluptatibus voluptas unde harum deleniti
+                    accusantium similique at aut quam at eius sed iusto necessitatibus debitis maxime est officiis vitae
+                    error voluptatem cupiditate ducimus odit quia omnis eum facere nesciunt sed et placeat dolorum et
+                    dolorem sunt ducimus corrupti odit veritatis occaecati vitae cum non illo similique eum facilis corporis
+                    ducimus sapiente vel sequi cumque illo praesentium aspernatur eveniet sapiente debitis nihil dolorum aut
+                    consequatur aspernatur eos perferendis placeat libero consectetur aut doloribus consequatur quam et
+                    minima nesciunt libero saepe eos maiores architecto inventore dolore et tempora quia id minima quia
+                    excepturi hic impedit atque impedit nemo aspernatur rerum eligendi sint qui atque laboriosam quam autem
+                    esse quibusdam accusamus quos eum doloremque quia veniam quas labore velit minima minima esse rem maxime
+                    rerum quo magni ut fugiat cumque voluptatem omnis delectus earum illum molestiae nihil perspiciatis
+                    dolorum impedit consequatur ut odio corporis possimus iusto exercitationem eos sequi ut est omnis quis
+                    consequatur est ipsum sit odio qui odio voluptate quia culpa in itaque natus aut hic nostrum voluptatem
+                    occaecati veritatis sunt at odio eveniet ad et ut ex doloremque vitae accusantium eligendi nemo et
+                    corrupti est molestias soluta doloremque rem animi placeat tempore qui cum aut consequatur aut rerum
+                    maiores doloremque.</p>
+                <p>Expedita doloremque accusamus cum quisquam ducimus eum voluptate adipisci a qui corporis est expedita
+                    neque est iusto consequatur nobis animi fugit est optio consequatur harum est deserunt quos mollitia
+                    vitae quibusdam porro voluptatum qui voluptatem sunt laborum et omnis assumenda voluptas mollitia
+                    consequatur non aut alias est sunt officia quidem dolores et molestias quo optio quia cupiditate quia
+                    sit quia voluptas rerum temporibus blanditiis iusto iure amet consequatur itaque debitis libero iusto
+                    soluta impedit explicabo ipsum perspiciatis quia adipisci temporibus aut debitis quo ex nihil ullam
+                    dolorem ducimus pariatur aliquam veritatis occaecati quia facere rerum aut sequi eum eos laboriosam
+                    facere odit corrupti enim nostrum ex temporibus debitis qui veritatis culpa voluptas consequuntur
+                    aperiam sint soluta aut deleniti sint sit atque eos a reprehenderit odio tempore sed commodi velit velit
+                    repudiandae deleniti iste et ut qui rem consequatur nihil debitis enim nemo excepturi quia in et aperiam
+                    unde commodi et pariatur est blanditiis aliquid blanditiis doloribus rem excepturi nihil vel aut aliquid
+                    veritatis fugit impedit ut voluptatibus quia hic id qui natus possimus velit doloribus voluptate nam et
+                    in animi harum porro aut id sint iste voluptatem sit fugit sit illo corrupti consectetur nam dolor
+                    officiis placeat velit voluptas a id aut voluptatem reiciendis mollitia modi aut placeat eos sint ipsa
+                    maxime provident laudantium dolores eos ut rerum quis nulla incidunt sed et praesentium ipsa sapiente
+                    sit nihil et veniam nostrum ipsam rerum et ex commodi assumenda fuga deleniti eius consequuntur iure
+                    atque dicta aut culpa accusamus dignissimos sint labore minus rem et enim itaque qui ut assumenda sequi
+                    ducimus ut harum id consectetur sint rem autem natus quis officiis quod magnam ad optio voluptate
+                    voluptates itaque excepturi quaerat ut iure ut beatae veritatis sit aut distinctio voluptates est quasi
+                    labore et recusandae temporibus ut provident in recusandae explicabo ut odit sit optio fuga asperiores
+                    vero repellendus quisquam eligendi optio aspernatur perspiciatis vitae dolorum eius ea architecto aut
+                    itaque reiciendis debitis iure velit animi quia reprehenderit illum magnam repellat veritatis quaerat
+                    distinctio dicta est eos nam reprehenderit qui nihil necessitatibus vel debitis deleniti aut soluta
+                    rerum cumque quo tempore quia tenetur nulla molestiae suscipit non recusandae qui cumque quisquam labore
+                    deleniti et quia voluptatem voluptatem voluptatem dolore voluptate omnis illum consectetur ducimus eos
+                    blanditiis quia ratione vel deleniti suscipit nam rerum quod laboriosam qui voluptates maxime suscipit
+                    enim dolor quasi at occaecati porro eveniet sit deserunt ullam minus veniam repellendus non quo
+                    inventore nihil pariatur corrupti ut recusandae corrupti enim ut aliquam quia amet odio pariatur et sint
+                    excepturi quas fugit quia repellendus est quisquam voluptas odit reprehenderit vel sit cumque omnis quia
+                    molestias sequi dolor aut cum quaerat aliquam temporibus eveniet aliquid sint dignissimos odit est
+                    consequatur dolorum rem excepturi sint commodi et quo asperiores fugiat voluptatem voluptas in qui et
+                    atque nihil debitis temporibus sit incidunt deserunt omnis dolorem quaerat iure consequatur et commodi
+                    impedit quod quas et quibusdam temporibus molestiae tempora et id quo tempora officiis provident sed
+                    minus unde eligendi omnis tenetur quasi ut beatae eius voluptatum aliquid assumenda quidem occaecati
+                    unde eveniet quia explicabo id ullam consequatur totam earum incidunt atque alias enim laboriosam
+                    distinctio debitis unde nam facere id earum officiis ut reiciendis sint facilis nobis accusamus alias ea
+                    sit iure.</p>
+                <p>Nam itaque corporis earum asperiores quia et velit deserunt qui non sed qui nisi qui vitae recusandae
+                    sunt dolorem dolores consectetur facere exercitationem facere dolor at eum rerum quisquam cum voluptas
+                    et libero mollitia omnis accusamus dolore quis aut porro sapiente totam placeat adipisci corrupti quasi
+                    ab sunt est ea ea occaecati illo qui et saepe nulla delectus libero accusantium ut eveniet tempora
+                    voluptatum sequi nostrum fugit minima assumenda eum saepe est voluptatem perspiciatis dolor cupiditate
+                    cupiditate perspiciatis modi accusantium dolores facere quia non voluptas consequatur dicta beatae quos
+                    tempora quia est in rerum et totam rerum et ut laudantium assumenda vel beatae voluptatem asperiores
+                    libero quasi labore sed nostrum nihil voluptas sed laudantium ratione omnis sed sit consequuntur eos sed
+                    ab porro sed eligendi non in quia ducimus hic eligendi quo saepe est tempora quia sint sit voluptas
+                    nesciunt qui quis et qui sunt fuga quia aut praesentium adipisci sit laudantium placeat molestias
+                    commodi sed tenetur cupiditate sed tenetur ut odit iste ea neque rem aut voluptates quae quasi explicabo
+                    autem vitae eaque ipsum dolorem quidem provident hic quos voluptatem laboriosam blanditiis ducimus ut
+                    quasi aut quia molestias dolor laudantium perspiciatis perspiciatis modi esse et quo veritatis quae eius
+                    exercitationem est incidunt neque mollitia eius hic deleniti at et est minima repellat quo nihil officia
+                    sit et ab iure omnis recusandae voluptatem dolorum suscipit in consectetur ipsa eum et veritatis sed
+                    soluta provident dolorum dignissimos ullam nemo sunt voluptas excepturi laudantium odit id veniam quae
+                    unde et sed corrupti est laboriosam doloremque aspernatur consectetur consequuntur ut molestias et in
+                    fugit ea ad ipsa voluptatem voluptatem vel esse dolore eos reiciendis ut similique maiores eos molestias
+                    minima eveniet ut omnis ut sapiente quod architecto suscipit porro sint consequatur at libero omnis
+                    autem sit ut voluptates animi similique quo sequi voluptatem ut occaecati est dicta est quia minima
+                    aliquid repellendus aut nostrum necessitatibus magnam officia sed at sit molestiae incidunt error velit
+                    nostrum dignissimos sed id ipsa voluptate sed officia illo dolores praesentium consequatur impedit
+                    placeat aut reiciendis aut beatae eum eum corrupti in fugiat ut sequi quia molestiae vitae laudantium
+                    recusandae neque dolorum dolorem officiis impedit enim adipisci sint sed dolores sit rerum esse nostrum
+                    eius libero deserunt iste quasi quia consequatur ad consequatur id perferendis suscipit deserunt qui
+                    dolores possimus debitis quos et aut vitae fugiat rerum nihil accusamus adipisci sed consequatur velit
+                    aut ut dolores qui eius voluptas accusantium labore quis commodi in corporis modi excepturi velit quae
+                    et asperiores repudiandae animi dolorum aliquid id unde explicabo quam quaerat labore vitae aut libero
+                    corporis voluptatibus quo molestiae fugiat velit ipsum quod voluptatem sed totam omnis laudantium quia
+                    iusto aut.</p>
+                <p>Recusandae laboriosam ut ea ut itaque omnis aut sit labore harum doloribus alias hic ex quo ad sed
+                    explicabo asperiores qui est et et sit sequi deleniti cum quis doloribus perferendis et quam id voluptas
+                    iste fuga accusantium nulla at labore at sit ut atque corrupti libero illum voluptas consequatur aut et
+                    voluptatum nulla ut omnis nulla suscipit est cupiditate quibusdam veritatis reiciendis fugit praesentium
+                    quo aspernatur doloremque nihil quo repudiandae ab rem quaerat consequatur repudiandae quis et eum
+                    commodi voluptates at officiis rerum aliquid sint vero consequatur aut corporis laboriosam a et tempore
+                    et esse saepe a odio consequatur numquam voluptates laborum modi ad aut molestiae incidunt veniam
+                    consequuntur debitis aspernatur amet laborum maxime perspiciatis ut pariatur mollitia voluptatem qui
+                    tempora inventore et eos est eum voluptatibus quo id iste dignissimos eum labore placeat amet eligendi
+                    harum vitae harum minus omnis accusantium esse est asperiores quis aut molestiae rerum error qui sequi
+                    odit saepe ipsa omnis atque modi minus ex qui voluptatem tenetur dignissimos quaerat neque maxime facere
+                    laboriosam quasi nam doloribus ipsam ipsa enim consequatur dolorem eaque aspernatur qui est minima
+                    tempora excepturi blanditiis nulla veniam unde omnis sequi est iusto iusto velit debitis eligendi sed
+                    sed corporis in consectetur amet cum consequatur voluptatem non sed qui saepe officia non eaque et
+                    occaecati quidem voluptate veniam odio et placeat necessitatibus et est recusandae nisi architecto vitae
+                    distinctio eos consequatur iusto vel id consequatur tempore natus et atque vel quia molestiae ut quaerat
+                    assumenda officia temporibus accusamus officia ut quia totam ratione voluptas voluptate provident
+                    voluptas omnis qui similique nisi molestiae ut aut porro placeat cupiditate est sint ratione
+                    exercitationem autem vel iure corporis voluptate laborum ut reiciendis dicta velit et est incidunt ad
+                    saepe quae nihil quo est iste deleniti vitae in aliquid ipsum totam molestias et enim id vel vero fuga
+                    beatae necessitatibus dolorem vero aperiam rerum quasi cumque ad voluptatem eos velit autem et
+                    asperiores consequuntur et quia ut non temporibus iusto deleniti doloremque saepe explicabo magni hic
+                    sit est hic aut officia quia possimus quis facilis magni sed explicabo ab excepturi est sit natus
+                    veritatis cum aperiam eos nesciunt non tenetur quo dolore nam magni illo recusandae omnis dolores
+                    debitis ut molestias temporibus sequi dicta nihil dolore incidunt sit et corporis sed sint repellendus
+                    eligendi rerum quaerat eos facilis voluptatibus dolor qui quia eveniet et inventore praesentium eligendi
+                    voluptas ad qui repudiandae rem est suscipit consectetur esse rem vel quas itaque consequatur vero cum
+                    possimus consequatur dicta maxime consequuntur et in quia iste accusamus quos a officia maiores quos
+                    error nihil cum cupiditate culpa a aspernatur voluptate beatae quis animi delectus tempora quia quae
+                    voluptates velit asperiores qui veritatis accusamus maiores aliquam voluptatum tenetur.</p>
+            </div>
+            <p>
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-2" id="wrapperInput">
+                    <select id="jenis_input" name='jenis_input' class="md-input" data-uk-tooltip="{pos:'top'}" title="Pilih Jenis Inputan">
+                        <option value="" disabled selected hidden>Jenis Input...</option>
+                        <option value="a">Input</option>
+                        <option value="b">Dropown PIC</option>
+                        <option value="c">Dropown Level PIC</option>
+                        <option value="d">Dropown Satuan</option>
+                    </select>
+                    <span class="uk-form-help-block">Pilih Jenis Inputan</span>
+                </div>
+                <div class="uk-width-large-1-2" id="dropdown_child">
+                    <div id="wrapper_pic">
+                        <select id="drop_pic" name="drop_pic" multiple>
+                            <option value="1" selected>DMEP</option>
+                            <option value="2" selected>DMOT</option>
+                        </select>
+                    </div>
+                    <div id="wrapper_level">
+                        <select id="drop_level" name="drop_level" multiple>
+                            <option value="1" selected>IKSP</option>
+                            <option value="2" selected>IKSP-2</option>
+                        </select>
+                    </div>
+                    <div id="wrapper_satuan">
+                        <select id="drop_satuan" name="drop_satuan" multiple>
+                            <option value="21" selected>%</option>
+                            <option value="1" selected>BOPD</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            </p>
+            <h2 class="heading_a">Some text below the overflow container</h2>
+            <p>Omnis officiis sint perspiciatis consequatur molestiae repellendus similique fugit sit dolor eveniet nostrum
+                reiciendis consequatur est atque dolor pariatur vero voluptas labore aut repellendus sit sit veritatis
+                facere repudiandae suscipit quasi asperiores nemo blanditiis molestiae sunt sit et rerum reiciendis dolorum
+                repudiandae id velit corporis rem provident et vel quia voluptate quaerat officia inventore voluptas unde
+                unde reiciendis ducimus consectetur non ut aliquid omnis harum distinctio laudantium exercitationem quia
+                quos.</p>
         </div>
     </div>
 
@@ -159,7 +336,8 @@
 
     <script src="altair/assets/custom_js/jspreadsheet/jspreadsheet.js"></script>
     <script src="altair/assets/custom_js/jspreadsheet/jsuites.js"></script>
-    {{-- <script src="https://jspreadsheet.com/v12/jspreadsheet.js"></script>
+    {{--
+    <script src="https://jspreadsheet.com/v12/jspreadsheet.js"></script>
     <script src="https://jsuites.net/v6/jsuites.js"></script> --}}
 
 
