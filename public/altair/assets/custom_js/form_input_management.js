@@ -72,7 +72,7 @@ ctrlFormInput = {
                 // }
             }
         });
-        ctrlFormInput.observerPageContentIner.observe($('#page_content_inner')[0]);
+        ctrlFormInput.observerPageContentIner.observe($('#wrapper_content')[0]);
     },
     initKendo: function () {
         $("#tahun").kendoDatePicker({

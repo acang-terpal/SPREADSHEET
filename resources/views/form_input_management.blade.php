@@ -95,7 +95,7 @@
 
             <div class="uk-grid uk-grid-width-medium-1-1" data-uk-grid="{gutter:24}">
                 <div>
-                    <div class="md-card">
+                    <div class="md-card" id="wrapper_content">
                         <div class="md-card-toolbar" style="height: 58px">
                             <div class="md-card-toolbar-actions">
                                 <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.getData()">Submit Data</a>
