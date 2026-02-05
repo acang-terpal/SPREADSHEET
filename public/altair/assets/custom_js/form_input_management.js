@@ -22,15 +22,6 @@ if (typeof(jQuery) !== 'undefined') {
     })(jQuery);
 }
 
-// const observer = new ResizeObserver(entries => {
-//     for (let entry of entries) {
-//         console.log('Elemen berubah ukuran!', entry.contentRect.width);
-//     }
-// });
-
-// // Mulai memantau elemen (misal: body atau div tertentu)
-// observer.observe($('#page_content_inner')[0]);
-
 $(document).ready(function () {
     ctrlFormInput.initKendo();
     ctrlFormInput.initModal();
@@ -51,8 +42,9 @@ ctrlFormInput = {
     dropDownPic: "",
     dropDownLevel: "",
     dropDownSatuan: "",
+    flagAddRow: false,
     datasourceInput: [
-        ['No', 'Data Dibutuhkan', 'Satuan', 'Level'],
+        ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
         ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
         ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
     ],
@@ -340,9 +332,6 @@ ctrlFormInput = {
         var parentWidth = $("#spreadSheetInput").parent().width();
         // Create spreadsheet
         formula.setFormula({ NEGATIVE });
-        // ctrlFormInput.worksheetInput = jspreadsheet(document.getElementById('spreadSheetInput'), {
-
-        // })[0];
         ctrlFormInput.worksheetInput = $('#spreadSheetInput').jspreadsheet({
             // toolbar: true,
             worksheets: [{
@@ -355,15 +344,27 @@ ctrlFormInput = {
                 filters: false,
                 columnSorting: false,
                 columnDrag: false,
+                allowInsertRow: true,
+                allowDeleteRow: true,
                 columns: [
                     { type: 'text', width: 50, wordWrap: true },
                     { type: 'text', width: 420, wordWrap: true },
                     { type:'dropdown', width:'120px', source:['Satuan', '%','BBL', 'MMSCFD'] },
                     { type:'dropdown', width:'120px', source:['Level', 'DMB','DMO', 'DMOP'] },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
                 ],
             }],
             onload: function(instance) {
                 ctrlFormInput.setupBehaviourCell(instance);
+            },
+            onbeforeinsertrow: function() {
+                if(ctrlFormInput.flagAddRow){
+                    return true;
+                }
+                return false;
             },
             onselection: function(instance, x1, y1, x2, y2){
                 // console.log("x1 : " + x1 + " y1 : " + y1 + " x2 : " + x2 + " y2 : " + y2);
@@ -419,8 +420,8 @@ ctrlFormInput = {
     setupBehaviourCell: function(instance){
         //----------------------set behaviour cell
         // Example: Loop through 8 columns (A-H) and 3 rows (1-3)
-        const numCols = 3;
-        const numRows = 3;
+        const numCols = ctrlFormInput.worksheetInput.options.columns.length - 1;
+        const numRows = ctrlFormInput.worksheetInput.options.data.length;
 
         for (let i = 0; i <= numCols; i++) {
             // Convert 0, 1, 2 to 'A', 'B', 'C'
@@ -479,6 +480,26 @@ ctrlFormInput = {
         ctrlFormInput.worksheetInput.setReadOnly(cellName, true);
         ctrlFormInput.worksheetInput.setStyle(cellName, 'background-color', 'yellow', true);
         ctrlFormInput.worksheetInput.setStyle(cellName, 'color', '#363434', true);
+    },
+    addRow: function(){
+        ctrlFormInput.flagAddRow = true;
+        //---------------add rows
+        ctrlFormInput.worksheetInput.insertRow(1);
+        const numRows = ctrlFormInput.worksheetInput.options.data.length;
+        cellNameA = 'A'+numRows;
+        cellNameB = 'B'+numRows;
+        cellNameC = 'C'+numRows;
+        cellNameD = 'D'+numRows;
+        ctrlFormInput.worksheetInput.setValue(cellNameA, numRows);
+        ctrlFormInput.worksheetInput.setReadOnly(cellNameA, true);
+        ctrlFormInput.worksheetInput.setStyle(cellNameA, 'color', '#363434', true);
+        ctrlFormInput.worksheetInput.setStyle(cellNameA, 'background-color', '#eeeeee', true);
+
+        ctrlFormInput.worksheetInput.setStyle(cellNameB, 'background-color', '#eeeeee', true);
+        ctrlFormInput.worksheetInput.setValue(cellNameC, '%');
+        ctrlFormInput.worksheetInput.setValue(cellNameD, 'DMB');
+
+        ctrlFormInput.flagAddRow = false;
     },
     negative: function (v) {
         return -1 * v;
