@@ -42,10 +42,10 @@
 
     <!-- matchMedia polyfill for testing media queries in JS -->
     <!--[if lte IE 9]>
-                                        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
-                                        <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
-                                        <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
-                                    <![endif]-->
+                                            <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.js"></script>
+                                            <script type="text/javascript" src="altair/bower_components/matchMedia/matchMedia.addListener.js"></script>
+                                            <link rel="stylesheet" href="altair/assets/css/ie.css" media="all">
+                                        <![endif]-->
 @endsection
 
 @section("header")
@@ -98,9 +98,12 @@
                     <div class="md-card" id="wrapper_content">
                         <div class="md-card-toolbar" style="height: 58px">
                             <div class="md-card-toolbar-actions">
-                                <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.getData()">Submit Data</a>
-                                <a class="md-btn md-btn-success md-btn-wave-light" onclick="ctrlFormInput.addColumn()">Add Column</a>
-                                <a class="md-btn md-btn-warning md-btn-wave-light" onclick="ctrlFormInput.addRow()">Add Row</a>
+                                {{-- <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.getData()">Submit
+                                    Data</a>
+                                <a class="md-btn md-btn-success md-btn-wave-light" onclick="ctrlFormInput.addColumn()">Add
+                                    Column</a>
+                                <a class="md-btn md-btn-warning md-btn-wave-light" onclick="ctrlFormInput.addRow()">Add
+                                    Row</a> --}}
                                 <i class="md-icon material-icons md-card-fullscreen-activate">&#xE5D0;</i>
                                 <i class="md-icon material-icons md-card-toggle">&#xE316;</i>
                                 {{-- <i class="md-icon material-icons md-card-close">&#xE14C;</i> --}}
@@ -109,9 +112,24 @@
                                 Input
                             </h3>
                         </div>
-                        <div class="md-card-content">
+                        <div class="md-card-content" style="padding-bottom: 100px">
                             <div style="uk-container">
                                 <div style="uk-width-1-1" id="spreadSheetInput"></div>
+                            </div>
+                            <div class="md-fab-wrapper md-fab-in-card">
+                                <div class="md-fab md-fab-accent md-fab-sheet">
+                                    <i class="material-icons">&#xe5d2;</i>
+                                    <div class="md-fab-sheet-actions">
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.getData()"><i
+                                                class="material-icons md-color-white">&#xe161;</i> Save</a>
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addColumn()"><i
+                                                class="material-icons md-color-white">add_column_right</i> Add Column</a>
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addRow()"><i
+                                                class="material-icons md-color-white">add_row_below</i> Add Row</a>
+                                        {{-- <a href="javascript:void(0)" class="md-color-white"><i
+                                                class="material-icons md-color-white">&#xE872;</i> Delete</a> --}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -254,7 +272,8 @@
             <p>
             <div class="uk-grid" data-uk-grid-margin>
                 <div class="uk-width-medium-1-2" id="wrapperInput">
-                    <select id="jenis_input" name='jenis_input' class="md-input" data-uk-tooltip="{pos:'top'}" title="Pilih Jenis Inputan">
+                    <select id="jenis_input" name='jenis_input' class="md-input" data-uk-tooltip="{pos:'top'}"
+                        title="Pilih Jenis Inputan">
                         <option value="" disabled selected hidden>Jenis Input...</option>
                         <option value="a">Input</option>
                         <option value="b">Dropown PIC</option>
