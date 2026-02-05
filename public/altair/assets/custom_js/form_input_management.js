@@ -443,7 +443,7 @@ ctrlFormInput = {
                     ctrlFormInput.worksheetInput.setReadOnly(cellCoord, false);
                     ctrlFormInput.worksheetInput.setStyle(cellCoord, 'background-color', 'white', true);
                     ctrlFormInput.worksheetInput.setValue(cellCoord, 'DMB');
-                } else if (i == 4 && j != 1) {
+                } else if (i >= 4 && j != 1) {
                     ctrlFormInput.worksheetInput.setReadOnly(cellCoord, false);
                     ctrlFormInput.worksheetInput.setStyle(cellCoord, 'background-color', 'white', true);
                     // change column to drop down
@@ -538,5 +538,8 @@ ctrlFormInput = {
                 console.log(err.responseJSON)
             },
         })
+    },
+    getData: function(){
+        console.log(ctrlFormInput.datasourceInput);
     }
 }

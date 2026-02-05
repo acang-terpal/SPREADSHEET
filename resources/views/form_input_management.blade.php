@@ -98,6 +98,7 @@
                     <div class="md-card">
                         <div class="md-card-toolbar" style="height: 58px">
                             <div class="md-card-toolbar-actions">
+                                <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.getData()">Get Data</a>
                                 <a class="md-btn md-btn-primary md-btn-wave-light" onclick="ctrlFormInput.addColumn()">Add Column</a>
                                 <a class="md-btn md-btn-warning md-btn-wave-light" onclick="ctrlFormInput.addRow()">Add Row</a>
                                 <i class="md-icon material-icons md-card-fullscreen-activate">&#xE5D0;</i>
