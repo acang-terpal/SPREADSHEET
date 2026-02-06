@@ -353,8 +353,8 @@ ctrlFormInput = {
                 columns: [
                     { type: 'text', width: 50, wordWrap: true },
                     { type: 'text', width: 420, wordWrap: true },
-                    { type:'dropdown', width:'120px', source:['Satuan', '%','BBL', 'MMSCFD'] },
-                    { type:'dropdown', width:'120px', source:['Level', 'DMB','DMO', 'DMOP'] },
+                    { type:'dropdown', width:'120px', source:['Satuan', '%','BBL', 'MMSCFD'], filter: ctrlFormInput.dropdownFilter },
+                    { type:'dropdown', width:'120px', source:['Level', 'DMB','DMO', 'DMOP'], filter: ctrlFormInput.dropdownFilter },
                     { type: 'text', width: 120, wordWrap: true },
                     { type: 'text', width: 120, wordWrap: true },
                     { type: 'text', width: 120, wordWrap: true },
@@ -387,34 +387,46 @@ ctrlFormInput = {
                 return false;
             },
             onbeforechange: function (instance, cell, x, y, value) {
-                // // -----------------------handle dropdown--------------------------
-                // if (value === 'Satuan' || value === 'Level' || value == '') {
-                //     return false; // Cancel the change
-                // } else if (x == 2){
-                //     ctrlFormInput.tempSatuanBeforeChange = structuredClone(ctrlFormInput.datasourceInput[y][x]);
-                // } else if (x == 3) {
-                //     ctrlFormInput.tempLevelBeforeChange = structuredClone(ctrlFormInput.datasourceInput[y][x]);
-                // }
+                // -----------------------handle dropdown--------------------------
+                // 1. Ambil konfigurasi kolom berdasarkan indeks x
+                var columnConfig = instance.options.columns[x];
+                ctrlFormInput.tempSatuanBeforeChange = structuredClone(ctrlFormInput.datasourceInput[y][x]);
+                ctrlFormInput.tempLevelBeforeChange = structuredClone(ctrlFormInput.datasourceInput[y][x]);
+                // 2. Cek apakah tipe kolom tersebut adalah 'dropdown'
+                if (columnConfig.type === 'dropdown') {
+                    if (value == '') {
+                        return false; // Cancel the change
+                    }
+                }
             },
             onchange: function (instance, cell, x, y, value) {
-                // cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
-                // // -----------------------handle dropdown--------------------------
-                // if(x == 2 && ctrlFormInput.tempSatuanBeforeChange != value){
-                //     if (value != false) {
-                //         console.log('New change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + ctrlFormInput.tempSatuanBeforeChange + ' to: ' + value);
-                //         instance.setValueFromCoords(x, y, value);
-                //     } else {
-                //         console.log('Before change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + value + ' to: ' + ctrlFormInput.tempSatuanBeforeChange);
-                //         instance.setValueFromCoords(x, y, ctrlFormInput.tempSatuanBeforeChange);
-
-                //     }
-                // } else if(x == 3 && ctrlFormInput.tempLevelBeforeChange != value){
-                //     if (value != false) {
-                //         instance.setValueFromCoords(x, y, value);
-                //     } else {
-                //         instance.setValueFromCoords(x, y, ctrlFormInput.tempLevelBeforeChange);
-                //     }
-                // }
+                cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
+                // -----------------------handle dropdown--------------------------
+                var columnConfig = instance.options.columns[x];
+                // 2. Cek apakah tipe kolom tersebut adalah 'dropdown', dan kembalikan nilai seperti semula bila value adalah empty/null/''
+                if (columnConfig.type === 'dropdown') {
+                    // ambil row paling atas di colum tersebut, untuk mendeteksi apakah select adalah satuan atau level
+                    var valCustomHeader = ctrlFormInput.worksheetInput.getValue(jspreadsheet.helpers.getCellNameFromCoords(x, 0));
+                    if(valCustomHeader == 'Satuan'){
+                        if(ctrlFormInput.tempSatuanBeforeChange != value){
+                            if (value != false) {
+                                // console.log('New change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + ctrlFormInput.tempSatuanBeforeChange + ' to: ' + value);
+                                instance.setValueFromCoords(x, y, value);
+                            } else {
+                                // console.log('Before change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + value + ' to: ' + ctrlFormInput.tempSatuanBeforeChange);
+                                instance.setValueFromCoords(x, y, ctrlFormInput.tempSatuanBeforeChange);
+                            }
+                        }
+                    } else if(valCustomHeader == 'Level'){
+                        if(ctrlFormInput.tempLevelBeforeChange != value){
+                            if (value != false) {
+                                instance.setValueFromCoords(x, y, value);
+                            } else {
+                                instance.setValueFromCoords(x, y, ctrlFormInput.tempLevelBeforeChange);
+                            }
+                        }
+                    }
+                }
             },
             onafterchanges: function(){
 
@@ -461,7 +473,7 @@ ctrlFormInput = {
     },
     addColumn: function(){
         ctrlFormInput.modalCreateColumn.show();
-        //---------------add new column dropdown
+        //---------------add new column with type dropdown
         // case (1, 3, true) column and row always start on index 0, so this mean: 1 -> add 1 column, 3 -> target column D, false -> add column after target column (D), f true is mean add column before column target (D)
         ctrlFormInput.worksheetInput.insertColumn(1, ctrlFormInput.worksheetInput.options.columns.length, false, {
             type: 'dropdown',
@@ -474,7 +486,7 @@ ctrlFormInput = {
         ctrlFormInput.worksheetInput.setStyle(cellName, 'background-color', 'yellow', true);
         ctrlFormInput.worksheetInput.setStyle(cellName, 'color', '#363434', true);
 
-        //---------------add new column input
+        //---------------add new column with type input
         ctrlFormInput.worksheetInput.insertColumn(1, ctrlFormInput.worksheetInput.options.columns.length, false, {
             type: 'text',
             width: '200px',
@@ -504,6 +516,15 @@ ctrlFormInput = {
         ctrlFormInput.worksheetInput.setValue(cellNameD, 'DMB');
 
         ctrlFormInput.flagAddRow = false;
+    },
+    dropdownFilter: function(instance, cell, c, r, source) {
+        let toRemove = (source.includes('Satuan')) ? 'Satuan' : 'Level';
+        const index = source.indexOf(toRemove); // Find the index of the item
+        if (index > -1) {
+            // Check if the item exists
+            source.splice(index, 1); // Remove 1 element at the found index
+        }
+        return source;
     },
     negative: function (v) {
         return -1 * v;

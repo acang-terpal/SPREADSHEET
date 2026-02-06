@@ -120,12 +120,9 @@
                                 <div class="md-fab md-fab-accent md-fab-sheet">
                                     <i class="material-icons">&#xe5d2;</i>
                                     <div class="md-fab-sheet-actions">
-                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.getData()"><i
-                                                class="material-icons md-color-white">&#xe161;</i> Save</a>
-                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addColumn()"><i
-                                                class="material-icons md-color-white">add_column_right</i> Add Column</a>
-                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addRow()"><i
-                                                class="material-icons md-color-white">add_row_below</i> Add Row</a>
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.getData()"><i class="material-icons md-color-white">&#xe161;</i> Save</a>
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addColumn()"><i class="material-icons md-color-white">&#xe8ec;</i> Add Column</a>
+                                        <a href="javascript:void(0)" class="md-color-white" onclick="ctrlFormInput.addRow()"><i class="material-icons md-color-white">&#xe896;</i> Add Row</a>
                                         {{-- <a href="javascript:void(0)" class="md-color-white"><i
                                                 class="material-icons md-color-white">&#xE872;</i> Delete</a> --}}
                                     </div>
