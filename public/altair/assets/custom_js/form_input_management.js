@@ -337,7 +337,7 @@ ctrlFormInput = {
         // Create spreadsheet
         formula.setFormula({ NEGATIVE });
         ctrlFormInput.worksheetInput = $('#spreadSheetInput').jspreadsheet({
-            // toolbar: true,
+            toolbar: false,
             worksheets: [{
                 data: ctrlFormInput.datasourceInput,
                 worksheetName: 'test1',
@@ -372,12 +372,13 @@ ctrlFormInput = {
             },
             onselection: function(instance, x1, y1, x2, y2){
                 // console.log("x1 : " + x1 + " y1 : " + y1 + " x2 : " + x2 + " y2 : " + y2);
+                cellName = jspreadsheet.helpers.getCellNameFromCoords(x1, y1);
+                $('#formula_editor').val(ctrlFormInput.worksheetInput.getValue(cellName));
                 // its mean header column E clicked
                 if(x2 == 4 && y2 > 0){
                     // instance.resetSelection();
                     return false;
                 }
-                cellName = jspreadsheet.helpers.getCellNameFromCoords(x1, y1);
                 // its mean column E clicked on row 0
                 if(x1 == 4 && y1 == 0){
                     ctrlFormInput.modalCreateColumn.show();
@@ -506,7 +507,7 @@ ctrlFormInput = {
         cellNameB = 'B'+numRows;
         cellNameC = 'C'+numRows;
         cellNameD = 'D'+numRows;
-        ctrlFormInput.worksheetInput.setValue(cellNameA, numRows);
+        ctrlFormInput.worksheetInput.setValue(cellNameA, numRows-1);
         ctrlFormInput.worksheetInput.setReadOnly(cellNameA, true);
         ctrlFormInput.worksheetInput.setStyle(cellNameA, 'color', '#363434', true);
         ctrlFormInput.worksheetInput.setStyle(cellNameA, 'background-color', '#eeeeee', true);
@@ -565,6 +566,9 @@ ctrlFormInput = {
         })
     },
     getData: function(){
-        console.log(ctrlFormInput.datasourceInput);
+        // console.log(ctrlFormInput.datasourceInput);
+        console.log(ctrlFormInput.worksheetInput.getData());
+        console.log(ctrlFormInput.worksheetInput.getStyle());
+        console.log(ctrlFormInput.worksheetInput.getMerge());
     }
 }
