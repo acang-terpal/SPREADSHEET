@@ -27,8 +27,30 @@ $(document).ready(function () {
 });
 
 let NEGATIVE = function (v) {
-    return ctrlFormInput.negative(v);
+    return window.ctrlFormInput.negative(v);
 }
+
+// own offset function
+let OFFSET = function(cellName, rows, cols, height, width) {
+    // Ambil instance spreadsheet (sesuaikan ID-nya)
+    var instance = document.getElementById('spreadSheetInput').jspreadsheet;
+
+    // Konversi nama sel (misal 'A1') menjadi koordinat [x, y]
+    var coords = jspreadsheet.helpers.getCoordsFromColumnName(cellName);
+    var startX = parseInt(coords[0]) + (cols || 0);
+    var startY = parseInt(coords[1]) + (rows || 0);
+
+    // Default height dan width adalah 1 jika tidak diisi
+    height = height || 1;
+    width = width || 1;
+
+    if (height === 1 && width === 1) {
+        return instance.getValueFromCoords(startX, startY);
+    } else {
+        // Jika range, ambil data dalam bentuk array (perlu penanganan tambahan di cell)
+        return instance.getData(false); // Sederhananya return raw data
+    }
+};
 
 class CtrlFormInput {
     // The constructor method is automatically called when a new object is created
@@ -47,20 +69,89 @@ class CtrlFormInput {
     tempSatuanBeforeChange;
     tempLevelBeforeChange;
     isChangeByProgram;
-
+    hfInstance;
+    sheetName;
+    sheetId;
     constructor() {
         this.init();
     }
-
     init(){
         this.initKendo();
         this.initModal();
         this.initSelectize();
+        // formula.js, the formula OFFSET not exist
+        // hyperformula.js, have a rich spreadsheet formula
+        this.initFormulaJs();
+        this.initHyperFormula();
         this.initSpreedSheetInput();
         this.initObserverPageContentIner();
         this.callBe(this.datasourceInput);
     }
+    initFormulaJs(){
+        // console.log(formulajs);
+        if (typeof formulajs !== 'undefined') {
+            // Mengekspor semua fungsi dari formulajs ke objek formula global
+            // sehingga Jspreadsheet CE bisa langsung menggunakannya di sel
+            Object.keys(formulajs).forEach((key) => {
+                // Jspreadsheet CE biasanya mencari fungsi pada objek global/window
+                window[key] = formulajs[key];
+                // console.log(window[key]);
+                formula.setFormula(formulajs);
+            });
+        }
+    }
+    initHyperFormula(){
+        // Konfigurasi HyperFormula
+        this.hfInstance = HyperFormula.buildEmpty({
+            licenseKey: 'gpl-v3', // Lisensi open source
+        });
 
+        // Tambahkan sheet bernama 'Sheet1' ke engine
+        this.sheetName = this.hfInstance.addSheet('Sheet1');
+        this.sheetId = this.hfInstance.getSheetId(this.sheetName);
+        // Seed HyperFormula with initial data
+        // this.hfInstance.setCellContents({ sheet: this.sheetId, row: 0, col: 0 }, this.datasourceInput);
+        // // Masukkan semua data awal ke HyperFormula
+        this.hfInstance.setSheetContent(this.sheetId, this.datasourceInput);
+        // this.syncFormulaResults();
+    }
+    syncFormulaResults() {
+        self = this;
+        // Ambil semua hasil kalkulasi (berupa array 2D) dari HyperFormula
+        const calculatedValues = this.hfInstance.getSheetValues(this.sheetId);
+
+        // Matikan event sementara agar tidak terjadi looping (infinite loop)
+        self.worksheetInput.ignoreEvents = true;
+
+        // this.hfInstance.getCellValue({row, col})
+        calculatedValues.forEach((row, r) => {
+            row.forEach((value, c) => {
+                if (value != '#DIV/0!'
+                    && value != '#VALUE!'
+                    && value != '#REF!'
+                    && value != '#NUM!'
+                    && value != '#CYCLE!'
+                    && value != '#ERROR!'
+                    && value != '#NAME?') {
+                    // Ambil formula asli dari sel (misal: "=SUM(A1:B1)")
+                    const rawValue = self.worksheetInput.getValueFromCoords(c, r);
+                    // console.log(rawValue + ' ' + value);
+
+                    // Jika sel tersebut memang berisi formula, update tampilannya dengan hasil hitungan
+                    if (rawValue && rawValue.toString().startsWith('=')) {
+                        // Update sel Jspreadsheet tanpa memicu onchange lagi
+                        self.worksheetInput.setValueFromCoords(c, r, value, true);
+                    }
+                } else {
+                    // dont do anything to cell
+                    // console.log("hyperformula error");
+                }
+            });
+        });
+
+        // Hidupkan kembali event
+        self.worksheetInput.ignoreEvents = false;
+    }
     initObserverPageContentIner () {
         this.observerPageContentIner = new ResizeObserver(entries => {
             for (let entry of entries) {
@@ -345,8 +436,10 @@ class CtrlFormInput {
     initSpreedSheetInput () {
         var self = this;
         var parentWidth = $("#spreadSheetInput").parent().width();
-        // Create spreadsheet
+        // Create own formula
         formula.setFormula({ NEGATIVE });
+        formula.setFormula({ OFFSET });
+        // jspreadsheet create worksheet
         this.worksheetInput = $('#spreadSheetInput').jspreadsheet({
             toolbar: false,
             worksheets: [{
@@ -439,6 +532,16 @@ class CtrlFormInput {
                         }
                     }
                 }
+                // // -----------------------sync hyperformula
+                // Kirim perubahan nilai ke HyperFormula
+                self.hfInstance.setCellContents({
+                    col: parseInt(x),
+                    row: parseInt(y),
+                    sheet: self.sheetId
+                }, [[value]]);
+
+                // Jalankan sinkronisasi untuk memperbarui sel formula lainnya
+                self.syncFormulaResults();
             },
             onafterchanges: function () {
 

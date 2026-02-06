@@ -364,6 +364,11 @@
 
     <script src="altair/assets/custom_js/jspreadsheet/jspreadsheet.js"></script>
     <script src="altair/assets/custom_js/jspreadsheet/jsuites.js"></script>
+    <script src="altair/assets/custom_js/jspreadsheet/formula.js"></script>
+    <script src="altair/assets/custom_js/jspreadsheet/hyperformula.js"></script>
+
+    {{-- <script src="https://cdn.jsdelivr.net/npm/@formulajs/formulajs/lib/browser/formula.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hyperformula/dist/hyperformula.full.min.js"></script> --}}
     {{--
     <script src="https://jspreadsheet.com/v12/jspreadsheet.js"></script>
     <script src="https://jsuites.net/v6/jsuites.js"></script> --}}
