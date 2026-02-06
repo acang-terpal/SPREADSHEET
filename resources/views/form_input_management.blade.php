@@ -36,6 +36,10 @@
     <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jspreadsheet.css" type="text/css" />
     <link rel="stylesheet" href="altair/assets/custom_js/jspreadsheet/jsuites.css" type="text/css" />
 
+    {{-- x-editable --}}
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
     {{--
     <link rel="stylesheet" href="https://jspreadsheet.com/v12/jspreadsheet.css" type="text/css" />
     <link rel="stylesheet" href="https://jsuites.net/v6/jsuites.css" type="text/css" /> --}}
@@ -366,6 +370,10 @@
     <script src="altair/assets/custom_js/jspreadsheet/jsuites.js"></script>
     <script src="altair/assets/custom_js/jspreadsheet/formula.js"></script>
     <script src="altair/assets/custom_js/jspreadsheet/hyperformula.js"></script>
+
+    {{-- x-editable --}}
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/@formulajs/formulajs/lib/browser/formula.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hyperformula/dist/hyperformula.full.min.js"></script> --}}

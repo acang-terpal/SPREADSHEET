@@ -477,21 +477,25 @@ class CtrlFormInput extends HyperFormulaClass {
         formula.setFormula({ NEGATIVE });
         formula.setFormula({ OFFSET });
         // jspreadsheet create worksheet
+        // List of available functions
+        const formulaList = ['SUM(', 'AVERAGE(', 'COUNT(', 'MAX(', 'MIN(', 'IF(', 'CONCATENATE('];
         this.worksheetInput = $('#spreadSheetInput').jspreadsheet({
             toolbar: false,
+            tabs: false,
             worksheets: [{
                 data: this.datasourceInput,
                 worksheetName: 'Input',
                 worksheetId: '0',
-                columnResize: false,
+                columnResize: true,
                 tableWidth: parentWidth - 30,
                 tableOverflow: true,
                 filters: false,
-                columnSorting: false,
+                columnSorting: true,
                 columnDrag: false,
                 allowInsertRow: true,
                 allowDeleteRow: true,
                 columns: this.column,
+                freezeColumns: 4
             }],
             onload: function (instance) {
                 self.setupStyleCell(instance);
@@ -505,7 +509,9 @@ class CtrlFormInput extends HyperFormulaClass {
             onselection: function (instance, x1, y1, x2, y2) {
                 // console.log("x1 : " + x1 + " y1 : " + y1 + " x2 : " + x2 + " y2 : " + y2);
                 var cellName = jspreadsheet.helpers.getCellNameFromCoords(x1, y1);
-                $('#formula_editor').val(self.worksheetInput.getValue(cellName));
+                console.log(self.worksheetInput.getMeta(cellName).meta);
+                // $('#formula_editor').val(self.worksheetInput.getValue(cellName));
+                $('#formula_editor').val(self.worksheetInput.getMeta(cellName).meta.formula ? self.worksheetInput.getMeta(cellName).meta.formula : '');
                 // its mean header column E clicked
                 if (x2 == 4 && y2 > 0) {
                     // instance.resetSelection();
@@ -516,7 +522,7 @@ class CtrlFormInput extends HyperFormulaClass {
                     self.modalCreateColumn.show();
                 }
             },
-            contextMenu: function () {
+            contextMenu: function (o, x, y, e, items, section) {
                 return false;
             },
             onbeforechange: function (instance, cell, x, y, value) {
@@ -530,6 +536,20 @@ class CtrlFormInput extends HyperFormulaClass {
                     if (value == '') {
                         return false; // Cancel the change
                     }
+                } else {
+                    // handle auto close bracket
+                    if (typeof value === 'string' && value.startsWith('=')) {
+                        // Count opening vs closing brackets
+                        const openCount = (value.match(/\(/g) || []).length;
+                        const closeCount = (value.match(/\)/g) || []).length;
+
+                        // If we are missing closing brackets, add them
+                        if (openCount > closeCount) {
+                            const missing = openCount - closeCount;
+                            return value + ")".repeat(missing);
+                        }
+                    }
+                    return value;
                 }
             },
             onchange: function (instance, cell, x, y, value) {
@@ -564,7 +584,9 @@ class CtrlFormInput extends HyperFormulaClass {
 
                 // ------------------------try with builtin jspreadsheet first, then formula.js if fail, if formula not exist or error then using hyperformula
                 // Recalculate if formula entered
+                // console.log('input cell is : ' + value);
                 if (typeof value === 'string' && value.startsWith('=')) {
+                    self.updateCellMeta(instance, cellName, "meta", {"formula" : value, "cellName" : cellName});
                     // try with jspreadsheet
                     let result = instance.executeFormula(value);
                     if (result != null && !Error.isError(result)) {
@@ -587,6 +609,146 @@ class CtrlFormInput extends HyperFormulaClass {
             },
             onafterchanges: function () {
 
+            },
+            oneditionstart: function(instance, cell, x, y, value) {
+                var cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
+                // Access the editor's input element
+                // 'cell' is the <td> element. Find the editor inside it.
+                // Use a small timeout to ensure the editor is fully rendered in the DOM
+                // setTimeout(() => {
+                //     // Find the active input or textarea
+                //     const editor = cell.querySelector('input, textarea');
+                //     console.log(editor);
+                //     if (editor) {
+                //         editor.addEventListener('input', function(e) {
+                //             console.log('Real-time typing:', e.target.value);
+                //         });
+                //     }
+                // }, 500); // 0 is good, but greater number is ok
+
+                // or this way
+                // let checkCount = 0;
+                // const interval = setInterval(() => {
+                //     const editor = cell.querySelector('input, textarea');
+                //     console.log(editor);
+                //     checkCount++;
+                //     if (editor) {
+                //         console.log("Editor found!");
+                //         editor.addEventListener('input', (e) => console.log('Real-time typing:', e.target.value));
+                //         clearInterval(interval); // Stop the loop
+                //     }
+                //     // Safety: stop searching after 2 seconds (20 attempts)
+                //     if (checkCount > 20) clearInterval(interval);
+                // }, 100); // Check every 100ms
+
+                // or this way (more elegant but not the best)
+                // const findEditor = () => {
+                //     const editor = cell.querySelector('input, textarea');
+                //     console.log(editor);
+                //     if (editor) {
+                //         editor.addEventListener('input', (e) => console.log('Real-time typing:', e.target.value));
+                //     } else {
+                //         // If not found, wait for the next animation frame and try again
+                //         requestAnimationFrame(findEditor);
+                //     }
+                // };
+                // findEditor();
+
+                // or with this way (the best)
+                const observer = new MutationObserver((mutations, obs) => {
+                    const editor = cell.querySelector('input, textarea');
+                    console.log(editor);
+                    if (editor) {
+                        obs.disconnect(); // Stop observing once found
+                        // reset cell with last meta formula
+                        let frmla = instance.getMeta(cellName).meta.formula;
+                        editor.value = frmla;
+                        // Create a small helper UI element
+                        const helper = document.createElement('div');
+                        helper.style = "position:absolute; background:white; border:1px solid #ccc; z-index:1000; display:none; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px;";
+                        document.body.appendChild(helper);
+
+                        // Attach the typing listener
+                        editor.addEventListener('input', (e) => {
+                            const val = e.target.value;
+                            console.log('Real-time typing:', val)
+                            // Check if it starts with =
+                            if (val.startsWith('=')) {
+                                console.log("Formula detected:", val);
+                                // Optional: Style the text to show it's a formula
+                                editor.style.color = 'blue';
+                                editor.style.fontWeight = 'bold';
+                                const search = val.substring(1); // Remove the '='
+                                const matches = formulaList.filter(f => f.startsWith(search));
+
+                                if (matches.length > 0 && search.length > 0) {
+                                    // Position the helper right under the cell
+                                    const rect = editor.getBoundingClientRect();
+                                    helper.style.left = rect.left + 'px';
+                                    helper.style.top = rect.bottom + 'px';
+                                    helper.style.display = 'block';
+
+                                    // Build the list of suggestions
+                                    helper.innerHTML = matches.map(m => `<div class="hint-item" style="padding:5px; cursor:pointer;">${m}</div>`).join('');
+
+                                    // Add click event to suggestions
+                                    helper.querySelectorAll('.hint-item').forEach(item => {
+                                        item.onmousedown = (event) => {
+                                            // 1. Prevent the spreadsheet from "blurring" the editor
+                                            event.preventDefault();
+                                            event.stopPropagation();
+
+                                            const selectedFormula = item.innerText;
+                                            editor.value = '=' + selectedFormula;
+
+                                            // 2. Hide helper
+                                            helper.style.display = 'none';
+
+                                            // 3. Force focus back using a timeout to override Jspreadsheet's focus manager
+                                            setTimeout(() => {
+                                                editor.focus();
+                                                // Move cursor to the end of the text
+                                                const len = editor.value.length;
+                                                editor.setSelectionRange(len, len);
+                                            }, 0);
+                                        };
+                                    });
+                                } else {
+                                    helper.style.display = 'none';
+                                }
+                            } else {
+                                editor.style.color = 'black';
+                                editor.style.fontWeight = 'normal';
+                                helper.style.display = 'none';
+                            }
+                        });
+                        // handler user to be able to pick the top suggestion by hitting the Tab key (like Excel)
+                        editor.addEventListener('keydown', (e) => {
+                            if (e.key === 'Tab' && helper.style.display === 'block') {
+                                // 1. Stop Jspreadsheet from moving to the next cell
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                // 2. Pick the first suggestion
+                                const firstHint = helper.querySelector('.hint-item');
+                                if (firstHint) {
+                                    editor.value = '=' + firstHint.innerText;
+                                    helper.style.display = 'none';
+                                    // 3. Keep the cursor at the end so they can type the range
+                                    const len = editor.value.length;
+                                    editor.setSelectionRange(len, len);
+                                }
+                            }
+                        });
+                        // Cleanup: Remove helper when user stops editing
+                        editor.addEventListener('blur', () => {
+                            setTimeout(() => helper.remove(), 200);
+                        });
+                    }
+                });
+                observer.observe(cell, { childList: true });
+            },
+            onevent: function(event, instance, cell, x, y, value) {
+                // console.log(event);
             }
         })[0];
     }
@@ -661,6 +823,24 @@ class CtrlFormInput extends HyperFormulaClass {
                 }
             }
         }
+        // set default all meta cell
+        const allData = this.worksheetInput.getData(); // ✅ Correct way in v5
+        console.log(allData);
+        console.log(allData.length);
+        console.log(allData[0].length);
+        for (let row = 0; row < allData.length; row++) {
+            for (let col = 0; col < allData[row].length; col++) {
+                var cellName = jspreadsheet.helpers.getCellNameFromCoords(col, row);
+                let val = '';
+                if(this.worksheetInput.getValue(cellName) == null
+                    || this.worksheetInput.getValue(cellName) == ''){
+                    this.updateCellMeta(this.worksheetInput, cellName, "meta", 'null');
+                }
+                this.updateCellMeta(this.worksheetInput, cellName, "meta", {"formula" : this.worksheetInput.getValue(cellName), "cellName" : cellName});
+                console.log(this.worksheetInput.getMeta(cellName));
+            }
+        }
+        console.log('✅ All cell metadata set on load.');
     }
     addColumn() {
         this.modalCreateColumn.show();
@@ -707,6 +887,13 @@ class CtrlFormInput extends HyperFormulaClass {
         this.worksheetInput.setValue(cellNameD, 'DMB');
 
         this.flagAddRow = false;
+    }
+    updateCellMeta(instance, cellName, forml, v) {
+        // Set meta information for B2
+        instance.setMeta(cellName, String(forml), v);
+        // Get meta information for A1
+        // console.log(instance.getMeta(cellName));
+        // console.log(instance.getMeta(cellName).formula);
     }
     dropdownFilter(instance, cell, c, r, source) {
         let toRemove = (source.includes('Satuan')) ? 'Satuan' : 'Level';
