@@ -136,8 +136,6 @@
                                         <a href="javascript:void(0)" class="md-color-white"
                                             onclick="ctrlFormInput.addRow()"><i
                                                 class="material-icons md-color-white">&#xe896;</i> Add Row</a>
-                                        {{-- <a href="javascript:void(0)" class="md-color-white"><i
-                                                class="material-icons md-color-white">&#xE872;</i> Delete</a> --}}
                                     </div>
                                 </div>
                             </div>
