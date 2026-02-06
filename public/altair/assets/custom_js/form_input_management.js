@@ -23,7 +23,24 @@ if (typeof (jQuery) !== 'undefined') {
 }
 
 $(document).ready(function () {
+    column = [
+        { type: 'text', width: 50, wordWrap: true },
+        { type: 'text', width: 420, wordWrap: true },
+        { type: 'dropdown', width: '120px', source: ['Satuan', '%', 'BBL', 'MMSCFD'], filter: this.dropdownFilter },
+        { type: 'dropdown', width: '120px', source: ['Level', 'DMB', 'DMO', 'DMOP'], filter: this.dropdownFilter },
+        { type: 'text', width: 120, wordWrap: true },
+        { type: 'text', width: 120, wordWrap: true },
+        { type: 'text', width: 120, wordWrap: true },
+        { type: 'text', width: 120, wordWrap: true },
+    ]
+    datasourceInput = [
+        ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
+        ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
+        ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
+    ];
     window.ctrlFormInput = new CtrlFormInput();
+    window.ctrlFormInput.setColumnSource(column);
+    window.ctrlFormInput.setDataSource(datasourceInput);
     window.ctrlFormInput.init();
 });
 
@@ -143,11 +160,8 @@ class CtrlFormInput extends HyperFormulaClass {
     dropDownLevel;
     dropDownSatuan;
     flagAddRow;
-    datasourceInput = [
-        ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
-        ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
-        ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
-    ];
+    datasourceInput;
+    column;
     tempSatuanBeforeChange;
     tempLevelBeforeChange;
     isChangeByProgram;
@@ -156,10 +170,10 @@ class CtrlFormInput extends HyperFormulaClass {
     constructor() {
         // call and setup parent class
         super();
-        super.setDataSource(this.datasourceInput);
-        super.initHyperFormula();
     }
     init() {
+        super.setDataSource(this.datasourceInput);
+        super.initHyperFormula();
         this.initKendo();
         this.initModal();
         this.initSelectize();
@@ -424,6 +438,12 @@ class CtrlFormInput extends HyperFormulaClass {
         // default hide all
         this.hideSelectize('all');
     }
+    setDataSource(datasourceInput) {
+        this.datasourceInput = datasourceInput;
+    }
+    setColumnSource(column){
+        this.column = column;
+    }
     hideSelectize(elName) {
         if (elName == 'all') {
             // hide selectize
@@ -449,9 +469,6 @@ class CtrlFormInput extends HyperFormulaClass {
             $('#wrapper_satuan').show();
         }
     }
-    setDataSource(datasourceInput) {
-        this.datasourceInput = datasourceInput;
-    }
     initSpreedSheetInput() {
         var self = this;
         // const syncFormulaResults = () => super.syncFormulaResults(this.worksheetInput, 0, 0, 0);
@@ -464,7 +481,7 @@ class CtrlFormInput extends HyperFormulaClass {
             toolbar: false,
             worksheets: [{
                 data: this.datasourceInput,
-                worksheetName: 'test1',
+                worksheetName: 'Input',
                 worksheetId: '0',
                 columnResize: false,
                 tableWidth: parentWidth - 30,
@@ -474,19 +491,10 @@ class CtrlFormInput extends HyperFormulaClass {
                 columnDrag: false,
                 allowInsertRow: true,
                 allowDeleteRow: true,
-                columns: [
-                    { type: 'text', width: 50, wordWrap: true },
-                    { type: 'text', width: 420, wordWrap: true },
-                    { type: 'dropdown', width: '120px', source: ['Satuan', '%', 'BBL', 'MMSCFD'], filter: this.dropdownFilter },
-                    { type: 'dropdown', width: '120px', source: ['Level', 'DMB', 'DMO', 'DMOP'], filter: this.dropdownFilter },
-                    { type: 'text', width: 120, wordWrap: true },
-                    { type: 'text', width: 120, wordWrap: true },
-                    { type: 'text', width: 120, wordWrap: true },
-                    { type: 'text', width: 120, wordWrap: true },
-                ],
+                columns: this.column,
             }],
             onload: function (instance) {
-                self.setupBehaviourCell(instance);
+                self.setupStyleCell(instance);
             },
             onbeforeinsertrow: function () {
                 if (self.flagAddRow) {
@@ -565,7 +573,7 @@ class CtrlFormInput extends HyperFormulaClass {
                     }
                     // try with formula.js
                     result = self.evaluateFormula(value, instance);
-                    if(result != '#UNSUPPORTED'){
+                    if (result != '#UNSUPPORTED') {
                         console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
                         instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
                     } else {
@@ -616,7 +624,7 @@ class CtrlFormInput extends HyperFormulaClass {
             return '#ERROR';
         }
     }
-    setupBehaviourCell(instance) {
+    setupStyleCell(instance) {
         //----------------------set behaviour cell
         // Example: Loop through 8 columns (A-H) and 3 rows (1-3)
         const numCols = this.worksheetInput.options.columns.length - 1;
