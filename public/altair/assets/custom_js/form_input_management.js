@@ -24,6 +24,7 @@ if (typeof (jQuery) !== 'undefined') {
 
 $(document).ready(function () {
     window.ctrlFormInput = new CtrlFormInput();
+    window.ctrlFormInput.init();
 });
 
 let NEGATIVE = function (v) {
@@ -31,7 +32,7 @@ let NEGATIVE = function (v) {
 }
 
 // own offset function
-let OFFSET = function(cellName, rows, cols, height, width) {
+let OFFSET = function (cellName, rows, cols, height, width) {
     // Ambil instance spreadsheet (sesuaikan ID-nya)
     var instance = document.getElementById('spreadSheetInput').jspreadsheet;
 
@@ -52,78 +53,54 @@ let OFFSET = function(cellName, rows, cols, height, width) {
     }
 };
 
-class CtrlFormInput {
-    // The constructor method is automatically called when a new object is created
-    observerPageContentIner;
-    worksheetInput;
-    modalCreateColumn;
-    dropDownPic;
-    dropDownLevel;
-    dropDownSatuan;
-    flagAddRow;
-    datasourceInput= [
-        ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
-        ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
-        ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
-    ];
-    tempSatuanBeforeChange;
-    tempLevelBeforeChange;
-    isChangeByProgram;
+class HyperFormulaClass {
     hfInstance;
     sheetName;
     sheetId;
+    datasourceInput;
+
     constructor() {
-        this.init();
+        //console.log("test");
     }
-    init(){
-        this.initKendo();
-        this.initModal();
-        this.initSelectize();
-        // formula.js, the formula OFFSET not exist
-        // hyperformula.js, have a rich spreadsheet formula
-        this.initFormulaJs();
-        this.initHyperFormula();
-        this.initSpreedSheetInput();
-        this.initObserverPageContentIner();
-        this.callBe(this.datasourceInput);
+
+    setDataSource(datasourceInput) {
+        this.datasourceInput = datasourceInput;
     }
-    initFormulaJs(){
-        // console.log(formulajs);
-        if (typeof formulajs !== 'undefined') {
-            // Mengekspor semua fungsi dari formulajs ke objek formula global
-            // sehingga Jspreadsheet CE bisa langsung menggunakannya di sel
-            Object.keys(formulajs).forEach((key) => {
-                // Jspreadsheet CE biasanya mencari fungsi pada objek global/window
-                window[key] = formulajs[key];
-                // console.log(window[key]);
-                formula.setFormula(formulajs);
-            });
-        }
-    }
-    initHyperFormula(){
+
+    initHyperFormula() {
         // Konfigurasi HyperFormula
         this.hfInstance = HyperFormula.buildEmpty({
             licenseKey: 'gpl-v3', // Lisensi open source
         });
 
-        // Tambahkan sheet bernama 'Sheet1' ke engine
-        this.sheetName = this.hfInstance.addSheet('Sheet1');
+        // Tambahkan sheet bernama 'Input' ke engine
+        this.sheetName = this.hfInstance.addSheet('Input');
         this.sheetId = this.hfInstance.getSheetId(this.sheetName);
         // Seed HyperFormula with initial data
         // this.hfInstance.setCellContents({ sheet: this.sheetId, row: 0, col: 0 }, this.datasourceInput);
-        // // Masukkan semua data awal ke HyperFormula
+        // Masukkan semua data awal ke HyperFormula
         this.hfInstance.setSheetContent(this.sheetId, this.datasourceInput);
         // this.syncFormulaResults();
     }
-    syncFormulaResults() {
-        self = this;
+
+    syncFormulaResults(instanceJspreadSheet, x, y, value) {
+        // console.log(x);
+        // console.log(y);
+        // console.log(value);
+        this.hfInstance.setCellContents({
+            col: parseInt(x),
+            row: parseInt(y),
+            sheet: this.sheetId
+        }, [[value]]);
         // Ambil semua hasil kalkulasi (berupa array 2D) dari HyperFormula
         const calculatedValues = this.hfInstance.getSheetValues(this.sheetId);
+        // console.log(calculatedValues);
 
         // Matikan event sementara agar tidak terjadi looping (infinite loop)
-        self.worksheetInput.ignoreEvents = true;
+        instanceJspreadSheet.ignoreEvents = true;
+        instanceJspreadSheet.ignoreHistory = true;
 
-        // this.hfInstance.getCellValue({row, col})
+        // this line code have purpose to collect all raw formula
         calculatedValues.forEach((row, r) => {
             row.forEach((value, c) => {
                 if (value != '#DIV/0!'
@@ -134,28 +111,67 @@ class CtrlFormInput {
                     && value != '#ERROR!'
                     && value != '#NAME?') {
                     // Ambil formula asli dari sel (misal: "=SUM(A1:B1)")
-                    const rawValue = self.worksheetInput.getValueFromCoords(c, r);
-                    // console.log(rawValue + ' ' + value);
-
-                    // Jika sel tersebut memang berisi formula, update tampilannya dengan hasil hitungan
+                    const rawValue = instanceJspreadSheet.getValueFromCoords(c, r, false);
+                    // Jika sel tersebut memang berisi formula, update dataFormula array
                     if (rawValue && rawValue.toString().startsWith('=')) {
-                        // Update sel Jspreadsheet tanpa memicu onchange lagi
-                        self.worksheetInput.setValueFromCoords(c, r, value, true);
+
                     }
                 } else {
-                    // dont do anything to cell
-                    // console.log("hyperformula error");
+
                 }
             });
         });
 
+        // const addressA1Notation = hfInstance.simpleCellAddressFromString('A1', sheetId);
+        // console.log(addressA1Notation);
+        let address = { sheet: this.sheetId, col: parseInt(x), row: parseInt(y) };
+        // console.log(address);
+        value = this.hfInstance.getCellValue(address);
+        instanceJspreadSheet.setValueFromCoords(x, y, value, true); // true = force update without triggering onchange again
         // Hidupkan kembali event
-        self.worksheetInput.ignoreEvents = false;
+        instanceJspreadSheet.ignoreEvents = false;
+        instanceJspreadSheet.ignoreHistory = false;
+        return value;
     }
-    initObserverPageContentIner () {
+}
+
+class CtrlFormInput extends HyperFormulaClass {
+    observerPageContentIner;
+    worksheetInput;
+    modalCreateColumn;
+    dropDownPic;
+    dropDownLevel;
+    dropDownSatuan;
+    flagAddRow;
+    datasourceInput = [
+        ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
+        ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
+        ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
+    ];
+    tempSatuanBeforeChange;
+    tempLevelBeforeChange;
+    isChangeByProgram;
+
+    // The constructor method is automatically called when a new object is created
+    constructor() {
+        // call and setup parent class
+        super();
+        super.setDataSource(this.datasourceInput);
+        super.initHyperFormula();
+    }
+    init() {
+        this.initKendo();
+        this.initModal();
+        this.initSelectize();
+        // before init spreadsheet, should call backend first to get dataSource and set it on atrribute class, line code should be here
+        this.initSpreedSheetInput();
+        this.initObserverPageContentIner();
+        this.callBe(this.datasourceInput);
+    }
+    initObserverPageContentIner() {
         this.observerPageContentIner = new ResizeObserver(entries => {
             for (let entry of entries) {
-                console.log('Elemen berubah ukuran!', entry.contentRect.width);
+                // console.log('Elemen berubah ukuran!', entry.contentRect.width);
                 //-------------------------change table jspreadsheet wrapper dynamic
                 $('.jss_content').attr("style", "width:" + (entry.contentRect.width - 30) + "px; overflow-x: auto; ");
 
@@ -174,7 +190,7 @@ class CtrlFormInput {
         });
         this.observerPageContentIner.observe($('#wrapper_content')[0]);
     }
-    initKendo () {
+    initKendo() {
         $("#tahun").kendoDatePicker({
             // Sets the format of the input field
             format: "yyyy",
@@ -202,10 +218,10 @@ class CtrlFormInput {
             });
         }
     }
-    initModal () {
+    initModal() {
         this.modalCreateColumn = UIkit.modal($('#modal_overflow'));
     }
-    initSelectize () {
+    initSelectize() {
         var self = this;
         // init dropdown pic
         this.dropDownPic = $('#drop_pic').selectize({
@@ -408,7 +424,7 @@ class CtrlFormInput {
         // default hide all
         this.hideSelectize('all');
     }
-    hideSelectize (elName) {
+    hideSelectize(elName) {
         if (elName == 'all') {
             // hide selectize
             $('#wrapper_pic').hide();
@@ -418,7 +434,7 @@ class CtrlFormInput {
             $('#wrapper_satuan').hide();
         }
     }
-    showSelectize (elName) {
+    showSelectize(elName) {
         if (elName == 'pic') {
             $('#wrapper_pic').show();
             $('#wrapper_level').hide();
@@ -433,8 +449,12 @@ class CtrlFormInput {
             $('#wrapper_satuan').show();
         }
     }
-    initSpreedSheetInput () {
+    setDataSource(datasourceInput) {
+        this.datasourceInput = datasourceInput;
+    }
+    initSpreedSheetInput() {
         var self = this;
+        // const syncFormulaResults = () => super.syncFormulaResults(this.worksheetInput, 0, 0, 0);
         var parentWidth = $("#spreadSheetInput").parent().width();
         // Create own formula
         formula.setFormula({ NEGATIVE });
@@ -505,7 +525,8 @@ class CtrlFormInput {
                 }
             },
             onchange: function (instance, cell, x, y, value) {
-                var cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y);
+                // x is column, y is row
+                var cellName = jspreadsheet.helpers.getCellNameFromCoords(x, y, value);
                 // -----------------------handle dropdown--------------------------
                 var columnConfig = instance.options.columns[x];
                 // 2. Cek apakah tipe kolom tersebut adalah 'dropdown', dan kembalikan nilai seperti semula bila value adalah empty/null/''
@@ -516,39 +537,86 @@ class CtrlFormInput {
                         if (self.tempSatuanBeforeChange != value) {
                             if (value != false) {
                                 // console.log('New change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + self.tempSatuanBeforeChange + ' to: ' + value);
-                                instance.setValueFromCoords(x, y, value);
+                                // instance.setValueFromCoords(x, y, value, true);
                             } else {
                                 // console.log('Before change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + value + ' to: ' + self.tempSatuanBeforeChange);
-                                instance.setValueFromCoords(x, y, self.tempSatuanBeforeChange);
+                                instance.setValueFromCoords(x, y, self.tempSatuanBeforeChange, true);
                             }
                         }
                     } else if (valCustomHeader == 'Level') {
                         if (self.tempLevelBeforeChange != value) {
                             if (value != false) {
-                                instance.setValueFromCoords(x, y, value);
+                                // instance.setValueFromCoords(x, y, value, true);
                             } else {
-                                instance.setValueFromCoords(x, y, self.tempLevelBeforeChange);
+                                instance.setValueFromCoords(x, y, self.tempLevelBeforeChange, true);
                             }
                         }
                     }
                 }
-                // // -----------------------sync hyperformula
-                // Kirim perubahan nilai ke HyperFormula
-                self.hfInstance.setCellContents({
-                    col: parseInt(x),
-                    row: parseInt(y),
-                    sheet: self.sheetId
-                }, [[value]]);
 
-                // Jalankan sinkronisasi untuk memperbarui sel formula lainnya
-                self.syncFormulaResults();
+                // ------------------------try with builtin jspreadsheet first, then formula.js if fail, if formula not exist or error then using hyperformula
+                // Recalculate if formula entered
+                if (typeof value === 'string' && value.startsWith('=')) {
+                    // try with jspreadsheet
+                    let result = instance.executeFormula(value);
+                    if (result != null && !Error.isError(result)) {
+                        console.log("trying with builtin jspreadsheet success " + result);
+                        return result;
+                    }
+                    // try with formula.js
+                    result = self.evaluateFormula(value, instance);
+                    if(result != '#UNSUPPORTED'){
+                        console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
+                        instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
+                    } else {
+                        // final fallback lets try with hyperformula
+                        result = HyperFormulaClass.prototype.syncFormulaResults.call(self, instance, x, y, value);
+                        console.log("formulajs failed, trying with hyperformula success " + result);
+                    }
+                    // should be try with backend if formula.js and hyperformula not support target formula
+                    // line code should be here
+                }
             },
             onafterchanges: function () {
 
             }
         })[0];
     }
-    setupBehaviourCell (instance) {
+    evaluateFormula(formula, instance) {
+        try {
+            if (!formula.startsWith('=')) return formula; // Not a formula
+
+            // Remove '='
+            const expr = formula.substring(1).trim();
+
+            // Handle NOW()
+            if (/^NOW\(\)$/i.test(expr)) {
+                return formulajs.NOW().toLocaleString();
+            }
+
+            // Handle SUM(A1:A3) or SUM(1,2,3)
+            const sumMatch = expr.match(/^SUM\((.+)\)$/i);
+            if (sumMatch) {
+                const args = sumMatch[1].split(',').map(arg => {
+                    arg = arg.trim();
+                    // If it's a cell reference like A1
+                    const cellRef = arg.match(/^([A-Z]+)(\d+)$/i);
+                    if (cellRef) {
+                        const colIndex = cellRef[1].charCodeAt(0) - 65; // 'A' -> 0
+                        const rowIndex = parseInt(cellRef[2], 10) - 1; // 1-based to 0-based
+                        return parseFloat(instance.getValueFromCoords(colIndex, rowIndex)) || 0;
+                    }
+                    return parseFloat(arg) || 0;
+                });
+                return formulajs.SUM.apply(null, args);
+            }
+
+            return '#UNSUPPORTED';
+        } catch (e) {
+            return '#ERROR';
+        }
+    }
+    setupBehaviourCell(instance) {
         //----------------------set behaviour cell
         // Example: Loop through 8 columns (A-H) and 3 rows (1-3)
         const numCols = this.worksheetInput.options.columns.length - 1;
@@ -586,7 +654,7 @@ class CtrlFormInput {
             }
         }
     }
-    addColumn () {
+    addColumn() {
         this.modalCreateColumn.show();
         //---------------add new column with type dropdown
         // case (1, 3, true) column and row always start on index 0, so this mean: 1 -> add 1 column, 3 -> target column D, false -> add column after target column (D), f true is mean add column before column target (D)
@@ -612,7 +680,7 @@ class CtrlFormInput {
         this.worksheetInput.setStyle(cellName, 'background-color', 'yellow', true);
         this.worksheetInput.setStyle(cellName, 'color', '#363434', true);
     }
-    addRow () {
+    addRow() {
         this.flagAddRow = true;
         //---------------add rows
         this.worksheetInput.insertRow(1);
@@ -632,7 +700,7 @@ class CtrlFormInput {
 
         this.flagAddRow = false;
     }
-    dropdownFilter (instance, cell, c, r, source) {
+    dropdownFilter(instance, cell, c, r, source) {
         let toRemove = (source.includes('Satuan')) ? 'Satuan' : 'Level';
         const index = source.indexOf(toRemove); // Find the index of the item
         if (index > -1) {
@@ -641,10 +709,10 @@ class CtrlFormInput {
         }
         return source;
     }
-    negative (v) {
+    negative(v) {
         return -1 * v;
     }
-    callBe (dataSource) {
+    callBe(dataSource) {
         // console.log(script + " from backend");
         // return -1 * script;
         // return script + " from backend";
@@ -679,7 +747,7 @@ class CtrlFormInput {
             },
         })
     }
-    getData () {
+    getData() {
         // console.log(this.datasourceInput);
         console.log(this.worksheetInput.getData());
         console.log(this.worksheetInput.getStyle());
