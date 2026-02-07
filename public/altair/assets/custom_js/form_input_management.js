@@ -23,23 +23,12 @@ if (typeof (jQuery) !== 'undefined') {
 }
 
 $(document).ready(function () {
-    column = [
-        { type: 'text', width: 50, wordWrap: true },
-        { type: 'text', width: 420, wordWrap: true },
-        { type: 'dropdown', width: '120px', source: ['Satuan', '%', 'BBL', 'MMSCFD'], filter: this.dropdownFilter },
-        { type: 'dropdown', width: '120px', source: ['Level', 'DMB', 'DMO', 'DMOP'], filter: this.dropdownFilter },
-        { type: 'text', width: 120, wordWrap: true },
-        { type: 'text', width: 120, wordWrap: true },
-        { type: 'text', width: 120, wordWrap: true },
-        { type: 'text', width: 120, wordWrap: true },
-    ]
     datasourceInput = [
         ['No', 'Data Dibutuhkan', 'Satuan', 'Level', 'TW I', 'TW II', 'TW III', 'TW IV'],
         ['1', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Bebas Hukuman Disiplin', '%', 'DMB'],
         ['2', 'Persentase Pegawai Direktorat Pembinaan Progam Migas yang Mencapai/ Melebihi Target Kinerja', '%', 'DMB'],
     ];
     window.ctrlFormInput = new CtrlFormInput();
-    window.ctrlFormInput.setColumnSource(column);
     window.ctrlFormInput.setDataSource(datasourceInput);
     window.ctrlFormInput.init();
 });
@@ -161,7 +150,6 @@ class CtrlFormInput extends HyperFormulaClass {
     dropDownSatuan;
     flagAddRow;
     datasourceInput;
-    column;
     tempSatuanBeforeChange;
     tempLevelBeforeChange;
     isChangeByProgram;
@@ -441,9 +429,6 @@ class CtrlFormInput extends HyperFormulaClass {
     setDataSource(datasourceInput) {
         this.datasourceInput = datasourceInput;
     }
-    setColumnSource(column){
-        this.column = column;
-    }
     hideSelectize(elName) {
         if (elName == 'all') {
             // hide selectize
@@ -484,6 +469,16 @@ class CtrlFormInput extends HyperFormulaClass {
             tabs: false,
             worksheets: [{
                 data: this.datasourceInput,
+                columns: [
+                    { type: 'text', width: 50, wordWrap: true },
+                    { type: 'text', width: 420, wordWrap: true },
+                    { type: 'dropdown', width: '120px', source: ['Satuan', '%', 'BBL', 'MMSCFD'], filter: self.dropdownFilter },
+                    { type: 'dropdown', width: '120px', source: ['Level', 'DMB', 'DMO', 'DMOP'], filter: self.dropdownFilter },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
+                    { type: 'text', width: 120, wordWrap: true },
+                ],
                 worksheetName: 'Input',
                 worksheetId: '0',
                 columnResize: true,
@@ -494,17 +489,22 @@ class CtrlFormInput extends HyperFormulaClass {
                 columnDrag: false,
                 allowInsertRow: true,
                 allowDeleteRow: true,
-                columns: this.column,
                 freezeColumns: 4
             }],
             onload: function (instance) {
                 self.setupStyleCell(instance);
             },
-            onbeforeinsertrow: function () {
-                if (self.flagAddRow) {
-                    return true;
-                }
-                return false;
+            oninsertrow: function(instance, cell, x, y, value){
+                // should add meta data on new row
+            },
+            ondeleterow: function(instance, cell, x, y, value){
+                // should delete meta data on deleted row
+            },
+            oninsertcolumn: function(instance, cell, x, y, value){
+                // should add meta data on new column
+            },
+            ondeletecolumn: function(instance, cell, x, y, value){
+                // should delete meta data on deleted column
             },
             onselection: function (instance, x1, y1, x2, y2) {
                 // console.log("x1 : " + x1 + " y1 : " + y1 + " x2 : " + x2 + " y2 : " + y2);
@@ -563,52 +563,46 @@ class CtrlFormInput extends HyperFormulaClass {
                     var valCustomHeader = self.worksheetInput.getValue(jspreadsheet.helpers.getCellNameFromCoords(x, 0));
                     if (valCustomHeader == 'Satuan') {
                         if (self.tempSatuanBeforeChange != value) {
-                            if (value != false) {
-                                // console.log('New change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + self.tempSatuanBeforeChange + ' to: ' + value);
-                                // instance.setValueFromCoords(x, y, value, true);
-                            } else {
-                                // console.log('Before change on cell ' + cellName + ' with coordinate: ' + x + ',' + y + ' from: ' + value + ' to: ' + self.tempSatuanBeforeChange);
+                            if (value == false) {
                                 instance.setValueFromCoords(x, y, self.tempSatuanBeforeChange, true);
                             }
                         }
                     } else if (valCustomHeader == 'Level') {
                         if (self.tempLevelBeforeChange != value) {
-                            if (value != false) {
-                                // instance.setValueFromCoords(x, y, value, true);
-                            } else {
+                            if (value == false) {
                                 instance.setValueFromCoords(x, y, self.tempLevelBeforeChange, true);
                             }
                         }
                     }
-                }
-
-                // ------------------------try with builtin jspreadsheet first, then formula.js if fail, if formula not exist or error then using hyperformula
-                // Recalculate if formula entered
-                // console.log('input cell is : ' + value);
-                let result = '';
-                let valTemp = structuredClone(value);
-                if (typeof value === 'string' && value.startsWith('=')) {
-                    // try with jspreadsheet
-                    let result = instance.executeFormula(value);
-                    if (result != null && !Error.isError(result)) {
-                        console.log("trying with builtin jspreadsheet success " + result);
-                    } else {
-                        // try with formula.js
-                        result = self.evaluateFormula(value, instance);
-                        if (result != '#UNSUPPORTED') {
-                            console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
-                            instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
+                } else {
+                    // ------------------------try with builtin jspreadsheet first, then formula.js if fail, if formula not exist or error then using hyperformula
+                    // Recalculate if formula entered
+                    // console.log('input cell is : ' + value);
+                    let result = '';
+                    let valTemp = structuredClone(value);
+                    if (typeof value === 'string' && value.startsWith('=')) {
+                        // try with jspreadsheet
+                        let result = instance.executeFormula(value);
+                        if (result != null && !Error.isError(result)) {
+                            console.log("trying with builtin jspreadsheet success " + result);
                         } else {
-                            // final fallback lets try with hyperformula
-                            result = HyperFormulaClass.prototype.syncFormulaResults.call(self, instance, x, y, value);
-                            console.log("formulajs failed, trying with hyperformula success " + result);
+                            // try with formula.js
+                            result = self.evaluateFormula(value, instance);
+                            if (result != '#UNSUPPORTED') {
+                                console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
+                                instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
+                            } else {
+                                // final fallback lets try with hyperformula
+                                result = HyperFormulaClass.prototype.syncFormulaResults.call(self, instance, x, y, value);
+                                console.log("formulajs failed, trying with hyperformula success " + result);
+                            }
+                            // should be try with backend if formula.js and hyperformula not support target formula
+                            // line code should be here
                         }
-                        // should be try with backend if formula.js and hyperformula not support target formula
-                        // line code should be here
                     }
+                    // save meta
+                    self.updateCellMeta(instance, cellName, "meta", {"cellName" : cellName, "formula" : valTemp, "value" : result});
                 }
-                // save meta
-                self.updateCellMeta(instance, cellName, "meta", {"cellName" : cellName, "formula" : valTemp, "value" : result});
             },
             onafterchanges: function () {
 
