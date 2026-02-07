@@ -509,7 +509,7 @@ class CtrlFormInput extends HyperFormulaClass {
             onselection: function (instance, x1, y1, x2, y2) {
                 // console.log("x1 : " + x1 + " y1 : " + y1 + " x2 : " + x2 + " y2 : " + y2);
                 var cellName = jspreadsheet.helpers.getCellNameFromCoords(x1, y1);
-                console.log(self.worksheetInput.getMeta(cellName).meta);
+                console.log("log from onselection " + JSON.stringify(self.worksheetInput.getMeta(cellName).meta));
                 // $('#formula_editor').val(self.worksheetInput.getValue(cellName));
                 $('#formula_editor').val(self.worksheetInput.getMeta(cellName).meta.formula ? self.worksheetInput.getMeta(cellName).meta.formula : '');
                 // its mean header column E clicked
@@ -585,27 +585,30 @@ class CtrlFormInput extends HyperFormulaClass {
                 // ------------------------try with builtin jspreadsheet first, then formula.js if fail, if formula not exist or error then using hyperformula
                 // Recalculate if formula entered
                 // console.log('input cell is : ' + value);
+                let result = '';
+                let valTemp = structuredClone(value);
                 if (typeof value === 'string' && value.startsWith('=')) {
-                    self.updateCellMeta(instance, cellName, "meta", {"formula" : value, "cellName" : cellName});
                     // try with jspreadsheet
                     let result = instance.executeFormula(value);
                     if (result != null && !Error.isError(result)) {
                         console.log("trying with builtin jspreadsheet success " + result);
-                        return result;
-                    }
-                    // try with formula.js
-                    result = self.evaluateFormula(value, instance);
-                    if (result != '#UNSUPPORTED') {
-                        console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
-                        instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
                     } else {
-                        // final fallback lets try with hyperformula
-                        result = HyperFormulaClass.prototype.syncFormulaResults.call(self, instance, x, y, value);
-                        console.log("formulajs failed, trying with hyperformula success " + result);
+                        // try with formula.js
+                        result = self.evaluateFormula(value, instance);
+                        if (result != '#UNSUPPORTED') {
+                            console.log("builtin jspreadsheet fail, trying with formulajs success " + result);
+                            instance.setValueFromCoords(x, y, result, true); // true = force update without triggering onchange again
+                        } else {
+                            // final fallback lets try with hyperformula
+                            result = HyperFormulaClass.prototype.syncFormulaResults.call(self, instance, x, y, value);
+                            console.log("formulajs failed, trying with hyperformula success " + result);
+                        }
+                        // should be try with backend if formula.js and hyperformula not support target formula
+                        // line code should be here
                     }
-                    // should be try with backend if formula.js and hyperformula not support target formula
-                    // line code should be here
                 }
+                // save meta
+                self.updateCellMeta(instance, cellName, "meta", {"cellName" : cellName, "formula" : valTemp, "value" : result});
             },
             onafterchanges: function () {
 
@@ -825,19 +828,14 @@ class CtrlFormInput extends HyperFormulaClass {
         }
         // set default all meta cell
         const allData = this.worksheetInput.getData(); // ✅ Correct way in v5
-        console.log(allData);
-        console.log(allData.length);
-        console.log(allData[0].length);
+        // console.log(allData);
+        // console.log(allData.length);
+        // console.log(allData[0].length);
         for (let row = 0; row < allData.length; row++) {
             for (let col = 0; col < allData[row].length; col++) {
                 var cellName = jspreadsheet.helpers.getCellNameFromCoords(col, row);
-                let val = '';
-                if(this.worksheetInput.getValue(cellName) == null
-                    || this.worksheetInput.getValue(cellName) == ''){
-                    this.updateCellMeta(this.worksheetInput, cellName, "meta", 'null');
-                }
-                this.updateCellMeta(this.worksheetInput, cellName, "meta", {"formula" : this.worksheetInput.getValue(cellName), "cellName" : cellName});
-                console.log(this.worksheetInput.getMeta(cellName));
+                var val = this.worksheetInput.getValue(cellName);
+                this.updateCellMeta(this.worksheetInput, cellName, "meta", {"cellName" : cellName, "formula" : val, "value" : val});
             }
         }
         console.log('✅ All cell metadata set on load.');
@@ -888,12 +886,9 @@ class CtrlFormInput extends HyperFormulaClass {
 
         this.flagAddRow = false;
     }
-    updateCellMeta(instance, cellName, forml, v) {
-        // Set meta information for B2
-        instance.setMeta(cellName, String(forml), v);
-        // Get meta information for A1
-        // console.log(instance.getMeta(cellName));
-        // console.log(instance.getMeta(cellName).formula);
+    updateCellMeta(instance, cellName, meta, v) {
+        instance.setMeta(cellName, String(meta), v);
+        console.log("log from update meta : " + JSON.stringify(instance.getMeta(cellName).meta));
     }
     dropdownFilter(instance, cell, c, r, source) {
         let toRemove = (source.includes('Satuan')) ? 'Satuan' : 'Level';
